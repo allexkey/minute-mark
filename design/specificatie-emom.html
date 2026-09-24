@@ -89,7 +89,15 @@ a{color:var(--accent)}
 .setn.xl{font-size:50cqw}
 .rem{font:800 11cqw/1 var(--display);font-variant-numeric:tabular-nums;margin-top:2cqw;opacity:.9}
 .foot{font:500 4.4cqw/1.3 var(--body);text-align:center;opacity:.85;min-height:2.6em}
-.bot{display:flex;justify-content:center;gap:4cqw;padding:0 7cqw 11cqw}
+.bot{display:flex;flex-direction:column;align-items:center;gap:3cqw;padding:0 7cqw 11cqw}
+.botrow{display:flex;gap:4cqw;width:100%}
+.restctl{display:flex;gap:2.4cqw;width:100%}
+.restbtn{flex:1;height:13cqw;border-radius:99px;border:.6cqw solid currentColor;background:transparent;color:inherit;font:800 5.4cqw/1 var(--display);letter-spacing:.03em;cursor:pointer}
+.restbtn.skip{flex:1.3;text-transform:uppercase;letter-spacing:.08em}
+.ph-rest .restbtn.skip{background:#fff;color:var(--rest);border-color:#fff}
+.ph-prep .restbtn.skip{background:var(--prep-ink);color:var(--prep);border-color:var(--prep-ink)}
+.setn.time{font-size:30cqw;letter-spacing:0}
+.undo.hi{bottom:50cqw}
 .pbtn{width:17cqw;height:17cqw;border-radius:50%;border:.7cqw solid currentColor;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;opacity:.9}
 .pbtn svg{width:6cqw;height:6cqw}
 .bigbtn{flex:1;height:16cqw;border-radius:8cqw;border:0;font:800 6.4cqw/1 var(--display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
@@ -262,10 +270,11 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
         <button class="tbtn" id="snd" aria-pressed="true">Pornit</button>
       </div>
       <ol class="steps">
-        <li><span>Alege intervalul și modul audio, apoi apasă <b>START</b>.</span></li>
+        <li><span>Alege tipul de timer (<b>EMOM</b> sau <b>Rest timer</b>), durata și modul audio, apoi apasă <b>START</b>.</span></li>
         <li><span>10 secunde de pregătire pe negru (GET READY), apoi ecranul devine <b>verde</b>: SET 1.</span></li>
         <li><span>Atinge ecranul (sau <span class="kbd">Space</span>) când termini setul: ecranul devine <b>albastru</b> (REST). Timp de 3 s poți apăsa UNDO.</span></li>
         <li><span>În ultimele 5 secunde ecranul devine <b>portocaliu</b>; urmează 3 beep-uri, flash, apoi setul următor.</span></li>
+        <li><span><b>Rest timer:</b> setul nu are limită. După tap începe pauza, cu −15s / SKIP / +15s; când pauza se termină, setul următor pornește singur.</span></li>
         <li><span>Butonul ⏸ îngheață tot. Sesiunea se încheie din ecranul de pauză, cu <b>END</b>.</span></li>
       </ol>
     </div>
@@ -439,28 +448,34 @@ const I = {
 const fmt = s => { s=Math.max(0,Math.floor(s)); const h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60;
   return h? `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; };
 const fmtI = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-const ring = f => `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="val" pathLength="100" style="stroke-dashoffset:${(100-f*100).toFixed(2)}"/></svg>`;
+const fmtUp = ms => fmtI(Math.max(0,Math.ceil(ms/1000)));    // remaining, rounded up
+const fmtEl = ms => fmtI(Math.max(0,Math.floor(ms/1000)));   // stopwatch, rounded down
+const ring = f => `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="val" pathLength="100" style="stroke-dashoffset:${(100-Math.max(0,Math.min(1,f))*100).toFixed(2)}"/></svg>`;
 const modeChip = m => `<span class="chip">${m==='airpods'?I.pods+'AirPods':I.music+'Music'}</span>`;
+const restCtl = '<div class="restctl"><button class="restbtn" data-act="r-">−15s</button><button class="restbtn skip" data-act="skip">Skip</button><button class="restbtn" data-act="r+">+15s</button></div>';
 
 function timerScr(o){
   return `<div class="scr ${o.cls}">
     <div class="top"><span>Total<b>${o.total}</b></span>${modeChip(o.mode||'airpods')}</div>
     <div class="mid">
       <div class="lbl">${o.label}</div>
-      <div class="dial">${ring(o.frac)}<div class="dial-in"><div class="setn ${o.xl?'xl':''}">${o.big}</div>${o.rem?`<div class="rem">${o.rem}</div>`:''}</div></div>
+      <div class="dial">${ring(o.frac)}<div class="dial-in"><div class="setn ${o.big2||''}">${o.big}</div>${o.rem?`<div class="rem">${o.rem}</div>`:''}</div></div>
       <div class="foot">${o.foot||''}</div>
     </div>
-    ${o.undo?'<button class="undo" data-act="undo">Undo</button>':''}
-    <div class="bot">${o.bot || `<button class="pbtn" data-act="pause" aria-label="Pause">${I.pause}</button>`}</div>
+    ${o.undo?`<button class="undo ${o.ctl?'hi':''}" data-act="undo">Undo</button>`:''}
+    <div class="bot">${o.ctl?restCtl:''}${o.bot ? `<div class="botrow">${o.bot}</div>` : `<button class="pbtn" data-act="pause" aria-label="Pause">${I.pause}</button>`}</div>
   </div>`;
 }
 function setupScr(c){
-  const warn = c.mode==='music' ? 'Cues play over your music. Press your AirPods to pause the music, tap the screen to finish a set.' : 'Other music will stop. Press your AirPods to finish a set.';
+  const rest = c.type==='rest';
+  const typeHint = rest ? 'Work at your own pace. When you finish a set, the rest countdown starts, then the next set.' : 'Every minute on the minute: a new set starts every interval.';
+  const warn = c.mode==='music' ? 'Cues play over your music. Tap the screen to finish a set.' : 'Other music will stop. Press your AirPods once to finish a set, twice to undo.';
   return `<div class="scr app">
     <div class="apphd"><span class="brand" style="font-size:9.5cqw">MINUTE MARK<i>.</i></span><button class="lnk" data-act="hist">History</button></div>
     <div class="fields">
-      <div><div class="flab">Interval</div><div class="stepper"><button data-act="int-" aria-label="Decrease interval">−</button><span>${fmtI(c.interval)}</span><button data-act="int+" aria-label="Increase interval">+</button></div></div>
-      <div><div class="flab">Target sets</div><div class="stepper sm"><button data-act="tg-" aria-label="Decrease target">−</button><span>${c.target||'∞'}</span><button data-act="tg+" aria-label="Increase target">+</button></div><div class="hint">${c.target?`Stops after ${c.target} sets`:'No target: runs until you stop'}</div></div>
+      <div><div class="flab">Timer</div><div class="seg"><button class="${rest?'':'on'}" data-act="t-emom">EMOM</button><button class="${rest?'on':''}" data-act="t-rest">Rest timer</button></div><div class="hint">${typeHint}</div></div>
+      <div><div class="flab">${rest?'Rest between sets':'Interval'}</div><div class="stepper"><button data-act="dur-" aria-label="Shorter">−</button><span>${fmtI(rest?c.rest:c.interval)}</span><button data-act="dur+" aria-label="Longer">+</button></div></div>
+      <div><div class="flab">Target sets</div><div class="stepper sm"><button data-act="tg-" aria-label="Fewer sets">−</button><span>${c.target||'∞'}</span><button data-act="tg+" aria-label="More sets">+</button></div></div>
       <div><div class="flab">Audio</div><div class="seg"><button class="${c.mode==='airpods'?'on':''}" data-act="m-air">${I.pods}AirPods</button><button class="${c.mode==='music'?'on':''}" data-act="m-mus">${I.music}With music</button></div><div class="hint">${warn}</div></div>
     </div>
     <div class="startbar"><button class="bigbtn go" data-act="start">Start</button></div>
@@ -470,57 +485,62 @@ function summaryScr(d){
   const marked = d.durs.filter(x=>x!=null);
   const avg = marked.length? Math.round(marked.reduce((a,b)=>a+b,0)/marked.length) : null;
   const mx = marked.length? Math.max(...marked):0;
-  const bars = d.durs.map(x=> x==null? '<div class="bar miss" title="not marked"></div>' : `<div class="bar ${x===mx&&marked.length>2?'slow':''}" style="height:${Math.max(4,x/d.interval*100)}%"></div>`).join('');
+  const scale = d.type==='rest' ? Math.max(1,mx) : d.interval;
+  const bars = d.durs.map(x=> x==null? '<div class="bar miss" title="not marked"></div>' : `<div class="bar ${x===mx&&marked.length>2?'slow':''}" style="height:${Math.max(4,Math.min(100,x/scale*100))}%"></div>`).join('');
+  const cap = d.type==='rest' ? `set time · rest ${fmtI(d.rest)}` : `set time / ${fmtI(d.interval)}`;
   return `<div class="scr app">
-    <div class="apphd"><span class="brand" style="font-size:9cqw">DONE<i>.</i></span><span class="hint" style="margin:0">${d.when}</span></div>
+    <div class="apphd"><span class="brand" style="font-size:${d.target?'7.4':'9'}cqw">${d.target?'TARGET REACHED':'DONE'}<i>.</i></span><span class="hint" style="margin:0">${d.when}</span></div>
     <div class="stats">
       <div class="stat"><b>${d.durs.length}</b><span>Sets</span></div>
       <div class="stat"><b>${d.total}</b><span>Total</span></div>
       <div class="stat"><b>${avg!=null?avg+'s':'—'}</b><span>Avg set</span></div>
     </div>
-    <div class="chart">${bars}</div>
-    <div class="chart-cap"><span>Set 1</span><span>set time / ${fmtI(d.interval)}</span><span>${d.durs.length}</span></div>
+    ${d.durs.length?`<div class="chart">${bars}</div><div class="chart-cap"><span>Set 1</span><span>${cap}</span><span>${d.durs.length}</span></div>`:''}
     <div class="note"><em>Exercise · note</em>${d.note}</div>
-    <div class="row2"><button class="bigbtn ghost" data-act="discard">Discard</button><button class="bigbtn go" data-act="save">Save</button></div>
+    <div class="row2">${d.target?'<button class="bigbtn ghost" data-act="keep">Keep going</button>':'<button class="bigbtn ghost" data-act="discard">Discard</button>'}<button class="bigbtn go" data-act="save">Save</button></div>
   </div>`;
 }
 function historyScr(rows){
   return `<div class="scr app">
     <div class="apphd"><span class="brand" style="font-size:9cqw">HISTORY</span><button class="lnk" data-act="back">Back</button></div>
-    <div class="hist">${rows.map(r=>`<div class="hrow"><div class="h1"><span>${r.d}</span><b>${r.s} sets</b></div><div class="h2">${r.t} · interval ${r.i} · avg ${r.a}</div><div class="h3">${r.n}</div></div>`).join('')}</div>
+    <div class="hist">${rows.map(r=>`<div class="hrow"><div class="h1"><span>${r.d}</span><b>${r.s} sets</b></div><div class="h2">${r.t} · ${r.i} · avg ${r.a}</div><div class="h3">${r.n}</div></div>`).join('')}</div>
   </div>`;
 }
 const HIST = [
-  {d:'Today, 07:45',s:14,t:'14:00',i:'1:00',a:'38s',n:'Push-ups × 15 · last 3 were tough'},
-  {d:'Mon, Sep 21',s:20,t:'20:00',i:'1:00',a:'31s',n:'Kettlebell swings 16 kg × 12'},
-  {d:'Fri, Sep 18',s:10,t:'15:00',i:'1:30',a:'52s',n:'Pull-ups × 6'},
-  {d:'Wed, Sep 16',s:12,t:'12:00',i:'1:00',a:'40s',n:'Burpees × 10'},
-  {d:'Mon, Sep 14',s:16,t:'16:00',i:'1:00',a:'29s',n:'Goblet squats 20 kg × 10'}
+  {d:'Today, 07:45',s:14,t:'14:00',i:'EMOM 1:00',a:'38s',n:'Push-ups × 15 · last 3 were tough'},
+  {d:'Mon, Sep 21',s:5,t:'11:40',i:'rest 1:30',a:'44s',n:'Bench press 80 kg × 6'},
+  {d:'Fri, Sep 18',s:10,t:'15:00',i:'EMOM 1:30',a:'52s',n:'Pull-ups × 6'},
+  {d:'Wed, Sep 16',s:4,t:'09:10',i:'rest 2:00',a:'38s',n:'Deadlift 120 kg × 5'},
+  {d:'Mon, Sep 14',s:16,t:'16:00',i:'EMOM 1:00',a:'29s',n:'Goblet squats 20 kg × 10'}
 ];
 
 /* static gallery */
 const G = [
-  ['Start', 'Interval, țintă opțională, mod audio. Ultimele setări se țin minte.', setupScr({interval:60,target:0,mode:'airpods'})],
-  ['Get ready', '10 s pe negru. Timp să lași telefonul jos.', timerScr({cls:'ph-ready',label:'Get ready',big:'7',xl:1,frac:.7,total:'00:00',foot:'Set 1 starts soon'})],
-  ['Work (verde)', 'Numărul setului în inel, timpul până la următorul minut sub el.', timerScr({cls:'ph-work',label:'Set',big:'8',rem:'0:42',frac:.7,total:'07:18',foot:'Tap anywhere when done'})],
-  ['Rest (albastru)', 'După tap sau AirPods. Se afișează durata setului.', timerScr({cls:'ph-rest',label:'Rest',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8: 34 s · next: set 9'})],
-  ['Ultimele 5 s', 'Portocaliu, beep-uri la 3, 2, 1.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',xl:1,frac:.05,total:'07:57',foot:'Get ready'})],
+  ['Start', 'Tipul de timer (EMOM sau Rest timer), interval sau pauză, țintă opțională, mod audio. Ultimele setări se țin minte.', setupScr({type:'emom',interval:60,rest:60,target:0,mode:'airpods'})],
+  ['Get ready', '10 s pe negru. Timp să lași telefonul jos.', timerScr({cls:'ph-ready',label:'Get ready',big:'7',big2:'xl',frac:.7,total:'00:00',foot:'Set 1 starts soon'})],
+  ['EMOM · Work', 'Numărul setului în inel, timpul până la următorul minut sub el.', timerScr({cls:'ph-work',label:'Set',big:'8',rem:'0:42',frac:.7,total:'07:18',foot:'Tap or press AirPods when done'})],
+  ['EMOM · Rest', 'După tap sau AirPods. Se afișează durata setului.', timerScr({cls:'ph-rest',label:'Rest',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8: 34 s · next: set 9'})],
+  ['Ultimele 5 s', 'Portocaliu, beep-uri la 3, 2, 1. La fel în ambele moduri.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',big2:'xl',frac:.05,total:'07:57',foot:'Get ready'})],
+  ['Rest timer · Start', 'În loc de interval se alege pauza dintre seturi: 0:15–5:00, implicit 1:00.', setupScr({type:'rest',interval:60,rest:60,target:0,mode:'airpods'})],
+  ['Rest timer · Set', 'Fără limită de timp: durata setului crește sub numărul lui. Inelul se umple o dată pe minut.', timerScr({cls:'ph-work',label:'Set',big:'3',rem:'0:41',frac:.68,total:'04:12',foot:'Tap or press AirPods when done'})],
+  ['Rest timer · Rest', 'Numărătoarea inversă e cifra mare. −15s / SKIP / +15s schimbă doar pauza curentă.', timerScr({cls:'ph-rest',label:'Rest',big:'0:48',big2:'time',frac:.8,total:'04:25',foot:'Set 3: 41 s · next: set 4',ctl:1})],
   ['Paused', 'Totul e înghețat. Singurul loc din care poți termina sesiunea.', timerScr({cls:'ph-paused',label:'Paused',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8 · rest',bot:'<button class="bigbtn ghost">End</button><button class="bigbtn go">Resume</button>'})],
-  ['Summary', 'Durata fiecărui set, cel mai lent în portocaliu. Notă înainte de salvare.', summaryScr({interval:60,when:'Sep 23 · 07:45',total:'14:00',durs:[24,26,27,29,30,31,33,34,null,37,39,42,46,51],note:'Push-ups × 15 · last 3 sets were tough'})],
-  ['History', 'Toate sesiunile, cele mai noi primele, salvate local.', historyScr(HIST)]
+  ['Summary', 'Durata fiecărui set, cel mai lent în portocaliu. Notă înainte de salvare.', summaryScr({type:'emom',interval:60,when:'Sep 23 · 07:45',total:'14:00',durs:[24,26,27,29,30,31,33,34,null,37,39,42,46,51],note:'Push-ups × 15 · last 3 sets were tough'})],
+  ['History', 'Toate sesiunile, cele mai noi primele, salvate local. Tipul de timer apare pe fiecare rând.', historyScr(HIST)]
 ];
 document.getElementById('gallery').innerHTML = G.map(([t,c,h])=>`<figure><div class="phone" aria-hidden="true"><div class="notch"></div><div class="screen">${h}</div></div><figcaption><b>${t}</b>${c}</figcaption></figure>`).join('');
 
-/* ---------- live prototype ---------- */
+/* ---------- live prototype: same session model as the app (session time e, ms; negative while getting ready) ---------- */
+const READY=10000, LAST=5000, CD=[3000,2000,1000], STEP=15000;
 const host = document.getElementById('live');
 const flash = document.createElement('div'); flash.className='flash';
 const body = document.createElement('div'); body.style.cssText='position:absolute;inset:0';
 host.append(body, flash);
 
-let cfg = {interval:60,target:0,mode:'airpods'};
+let cfg = {type:'emom',interval:60,rest:60,target:0,mode:'airpods'};
 try{ const s=JSON.parse(localStorage.getItem('emom-cfg')||'null'); if(s) cfg=Object.assign(cfg,s);}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('emom-cfg',JSON.stringify(cfg))}catch(e){}};
-let view='setup', speed=1, soundOn=true, R=null, last=performance.now(), lastKey='', summary=null;
+let view='setup', speed=1, soundOn=true, S=null, last=performance.now(), lastKey='', summary=null;
 
 let ac=null;
 function audio(){ if(!ac){ try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(ac&&ac.state==='suspended') ac.resume(); }
@@ -531,24 +551,53 @@ function say(t){ if(!soundOn||speed>1||!('speechSynthesis' in window)) return; t
   const v=speechSynthesis.getVoices().find(v=>/^en-US/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u);}catch(e){} }
 function doFlash(){ flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go'); }
 
-function start(){ audio(); R={phase:'ready',ready:10000,sess:0,set:0,durs:[],tapped:{},paused:false,prevSec:11,undoUntil:-1}; view='run'; say('Get ready'); }
-function newSet(n){ R.set=n; R.durs[n-1]=null; long(); doFlash(); say(n%5===0&&n>0&&cfg.interval===60?`${n} minutes`:`Set ${n}`); }
-function finish(){ const n=R.set; summary={interval:cfg.interval,when:'Just now',total:fmt(R.sess/1000),durs:R.durs.slice(0,n),note:'Add the exercise and any notes…'}; fin(); say(`Session complete. ${n} ${n===1?'set':'sets'}.`); view='summary'; R=null; }
+function targetMs(){ if(!S.target) return Infinity; if(S.type==='rest') return S.rsets[S.target-1]?.doneAt ?? Infinity; return S.target*S.I; }
+function restCur(){ const L=S.rsets, l=L[L.length-1];
+  if(!l) return {set:1,start:0,doneAt:null,restEnd:null,implicit:true};
+  if(l.doneAt!=null && S.e>=l.restEnd) return {set:L.length+1,start:l.restEnd,doneAt:null,restEnd:null,implicit:true};
+  return {set:L.length,...l,implicit:false}; }
+function vw(){
+  const e=S.e;
+  if(e<0) return {phase:'ready',set:1,rem:-e,frac:-e/READY};
+  if(e>=targetMs()) return {phase:'target',set:S.target,frac:0};
+  if(S.type==='rest'){ const c=restCur();
+    if(c.doneAt==null){ const inSet=e-c.start; return {phase:'work',set:c.set,inSet,frac:(inSet%60000)/60000}; }
+    const rem=c.restEnd-e, span=c.restEnd-c.doneAt;
+    return {phase:rem<=LAST?'last':'rest',set:c.set,rem,frac:span>0?rem/span:0,markedAt:c.doneAt-c.start}; }
+  const set=Math.floor(e/S.I)+1, inSet=e-(set-1)*S.I, rem=S.I-inSet, m=S.marks[set];
+  return {phase:rem<=LAST?'last':m!=null?'rest':'work',set,inSet,rem,frac:rem/S.I,markedAt:m};
+}
+function cues(from,to){
+  const out=[]; const push=(at,kind,x={})=>{ if(at>=from&&at<to) out.push({at,kind,...x}); };
+  for(const c of CD) push(-c,'tick');
+  if(S.type==='rest'){ push(0,'go',{set:1});
+    S.rsets.forEach((r,i)=>{ const set=i+2; if(r.restEnd==null||(S.target&&set>S.target)) return; for(const c of CD) if(r.restEnd-c>=r.doneAt) push(r.restEnd-c,'tick'); push(r.restEnd,'go',{set}); });
+    return out.sort((a,b)=>a.at-b.at); }
+  const end=targetMs();
+  for(let k=Math.max(0,Math.floor(from/S.I)); k*S.I<to+S.I; k++){ const b=k*S.I; if(b>end) break; if(b===end){ push(b,'target'); break; }
+    push(b,'go',{set:k+1,min:b>0&&b%300000===0?b/60000:null}); for(const c of CD) if(b+S.I-c<=end) push(b+S.I-c,'tick'); }
+  return out.sort((a,b)=>a.at-b.at);
+}
+
+function start(){ audio(); S={type:cfg.type,I:cfg.interval*1000,restMs:cfg.rest*1000,target:cfg.target,e:-READY,paused:false,marks:{},rsets:[],markedE:-1e9}; view='run'; say('Get ready'); }
+function finish(targetReached){
+  const end=Math.min(S.e,targetMs());
+  let durs;
+  if(S.type==='rest') durs=S.rsets.filter(r=>r.doneAt!=null).map(r=>Math.round((r.doneAt-r.start)/1000));
+  else { const n=end<=0?0:Math.floor(end/S.I)+(end%S.I===0?0:1); durs=[]; for(let i=1;i<=n;i++) durs.push(S.marks[i]!=null?Math.round(S.marks[i]/1000):null); }
+  summary={type:S.type,interval:S.I/1000,rest:S.restMs/1000,when:'Just now',total:fmt(Math.max(0,end)/1000),durs,note:'Add the exercise and any notes…',target:targetReached};
+  fin(); say(targetReached?`Target reached. ${durs.length} sets.`:`Session complete. ${durs.length} ${durs.length===1?'set':'sets'}.`);
+  S.paused=true; view='summary';
+}
 
 function tick(now){
   const dt=(now-last)*speed; last=now;
-  if(view==='run' && R && !R.paused){
-    const I=cfg.interval*1000;
-    if(R.phase==='ready'){
-      R.ready-=dt; const s=Math.ceil(R.ready/1000);
-      if(s<R.prevSec && s>=1 && s<=3) short(); R.prevSec=s;
-      if(R.ready<=0){ R.phase='run'; R.sess=-R.ready; R.prevSec=99; newSet(1); }
-    } else {
-      R.sess+=dt;
-      const n=Math.floor(R.sess/I)+1;
-      if(n>R.set){ if(cfg.target && n>cfg.target){ R.sess=cfg.target*I; finish(); } else newSet(n); }
-      if(R){ const rem=I-(R.sess%I), s=Math.ceil(rem/1000);
-        if(s<R.prevSec && s>=1 && s<=3) short(); R.prevSec=s; }
+  if(view==='run' && S && !S.paused){
+    const prev=S.e; S.e+=dt;
+    for(const c of cues(prev,S.e)){
+      if(c.kind==='tick') short();
+      else if(c.kind==='go'){ long(); doFlash(); say(c.min?`${c.min} minutes`:`Set ${c.set}`); }
+      else if(c.kind==='target'){ S.e=targetMs(); finish(true); break; }
     }
   }
   render();
@@ -561,17 +610,20 @@ function render(){
   else if(view==='hist'){ key='hist'; if(key!==lastKey) html=historyScr(HIST); }
   else if(view==='summary'){ key='sum'; if(key!==lastKey) html=summaryScr(summary); }
   else {
-    const I=cfg.interval*1000, total=fmt(Math.max(0,R.sess)/1000), inUndo=R.sess<R.undoUntil && R.tapped[R.set];
+    const v=vw(), total=fmt(Math.max(0,S.e)/1000), rest=S.type==='rest';
+    const done=n=>S.marks[n]!=null?`Set ${n}: ${Math.round(S.marks[n]/1000)} s`:null;
+    const secs=()=>String(Math.max(1,Math.ceil(v.rem/1000)));
+    const hint=cfg.mode==='airpods'?'Tap or press AirPods when done':'Tap anywhere when done';
     let o;
-    if(R.phase==='ready'){ const s=Math.ceil(R.ready/1000); o={cls:'ph-ready',label:'Get ready',big:String(Math.max(1,s)),xl:1,frac:R.ready/10000,total,foot:'Set 1 starts soon'}; }
-    else {
-      const inMin=R.sess%I, rem=I-inMin, remS=Math.ceil(rem/1000), frac=rem/I, t=R.tapped[R.set];
-      if(rem<=5000) o={cls:'ph-prep',label:`Set ${R.set+1} in`,big:String(remS),xl:1,frac,total,foot:t?`Set ${R.set}: ${R.durs[R.set-1]} s`:'Get ready'};
-      else if(t) o={cls:'ph-rest',label:'Rest',big:String(R.set),rem:fmtI(remS),frac,total,foot:`Set ${R.set}: ${R.durs[R.set-1]} s · next: set ${R.set+1}`,undo:inUndo};
-      else o={cls:'ph-work',label:'Set',big:String(R.set),rem:fmtI(remS),frac,total,foot:'Tap anywhere when done'};
-    }
+    if(v.phase==='ready') o={cls:'ph-ready',label:'Get ready',big:secs(),big2:'xl',frac:v.frac,total,foot:'Set 1 starts soon'};
+    else if(v.phase==='last') o={cls:'ph-prep',label:`Set ${v.set+1} in`,big:secs(),big2:'xl',frac:v.frac,total,foot:done(v.set)??'Get ready',ctl:rest};
+    else if(v.phase==='rest') o=rest
+      ? {cls:'ph-rest',label:'Rest',big:fmtUp(v.rem),big2:'time',frac:v.frac,total,foot:`${done(v.set)} · next: set ${v.set+1}`,ctl:1}
+      : {cls:'ph-rest',label:'Rest',big:String(v.set),rem:fmtUp(v.rem),frac:v.frac,total,foot:`${done(v.set)} · next: set ${v.set+1}`};
+    else o={cls:'ph-work',label:'Set',big:String(v.set),rem:rest?fmtEl(v.inSet):fmtUp(v.rem),frac:v.frac,total,foot:hint};
+    o.undo = v.phase==='rest' && S.e-S.markedE<3000;
     o.mode=cfg.mode;
-    if(R.paused){ o.cls='ph-paused'; o.foot=`Everything is frozen · ${o.label.toLowerCase()}`; o.label='Paused'; o.undo=false;
+    if(S.paused){ o.cls='ph-paused'; o.foot=v.phase==='ready'?'Countdown paused':`Set ${v.set} · ${{rest:'rest',last:'next set soon'}[v.phase]??'work'}`; o.label='Paused'; o.undo=false; o.ctl=false;
       o.bot='<button class="bigbtn ghost" data-act="end">End</button><button class="bigbtn go" data-act="resume">Resume</button>'; }
     html=timerScr(o); key=html;
   }
@@ -579,33 +631,47 @@ function render(){
 }
 
 function tap(){
-  if(view!=='run'||!R||R.paused||R.phase!=='run') return;
-  const I=cfg.interval*1000, inMin=R.sess%I;
-  if(R.tapped[R.set] || I-inMin<=5000) return;
-  R.tapped[R.set]=true; R.durs[R.set-1]=Math.round(inMin/1000); R.undoUntil=R.sess+3000*1; confirm();
+  if(view!=='run'||!S||S.paused) return;
+  const v=vw(); if(v.phase!=='work') return;
+  S.marks[v.set]=v.inSet; S.markedE=S.e; confirm(); say('Rest');
+  if(S.type==='rest'){ const c=restCur(), r={start:c.start,doneAt:S.e,restEnd:S.e+S.restMs};
+    if(c.implicit) S.rsets.push(r); else S.rsets[S.rsets.length-1]=r;
+    if(S.e>=targetMs()) finish(true); }
 }
+function undo(){ const v=vw(); if(S.paused||v.markedAt==null) return;
+  delete S.marks[v.set]; if(S.type==='rest'){ const l=S.rsets[S.rsets.length-1]; l.doneAt=null; l.restEnd=null; }
+  S.markedE=-1e9; tone(520,.1); }
+function adjust(d){ const v=vw(); if(S.type!=='rest'||S.paused||(v.phase!=='rest'&&v.phase!=='last')) return;
+  const l=S.rsets[S.rsets.length-1]; l.restEnd=Math.max(S.e, l.restEnd+d); tone(d>0?880:660,.07); }
+
 host.addEventListener('click',e=>{
   const a=e.target.closest('[data-act]'); audio();
-  if(!a){ tap(); return; }
-  const k=a.dataset.act;
-  if(k==='int-') cfg.interval=Math.max(30,cfg.interval-15);
-  else if(k==='int+') cfg.interval=Math.min(300,cfg.interval+15);
+  if(!a){ tap(); lastKey=''; return; }
+  const k=a.dataset.act, rk=cfg.type==='rest'?'rest':'interval', min=cfg.type==='rest'?15:30;
+  if(k==='dur-') cfg[rk]=Math.max(min,cfg[rk]-15);
+  else if(k==='dur+') cfg[rk]=Math.min(300,cfg[rk]+15);
+  else if(k==='t-emom') cfg.type='emom';
+  else if(k==='t-rest') cfg.type='rest';
   else if(k==='tg-') cfg.target=Math.max(0,cfg.target-1);
   else if(k==='tg+') cfg.target=Math.min(99,cfg.target+1);
   else if(k==='m-air') cfg.mode='airpods';
   else if(k==='m-mus') cfg.mode='music';
   else if(k==='start') start();
   else if(k==='hist') view='hist';
-  else if(k==='back'||k==='save'||k==='discard'){ view='setup'; }
-  else if(k==='pause' && R){ R.paused=true; tone(520,.12); say('Paused'); }
-  else if(k==='resume' && R){ R.paused=false; tone(780,.12); say('Resuming'); }
-  else if(k==='end' && R){ finish(); }
-  else if(k==='undo' && R){ R.tapped[R.set]=false; R.durs[R.set-1]=null; R.undoUntil=-1; tone(520,.1); }
+  else if(k==='back'||k==='save'||k==='discard'){ view='setup'; S=null; }
+  else if(k==='keep' && S){ S.target=0; S.paused=false; view='run'; say('Keep going'); }
+  else if(k==='pause' && S){ S.paused=true; tone(520,.12); say('Paused'); }
+  else if(k==='resume' && S){ S.paused=false; tone(780,.12); say('Resuming'); }
+  else if(k==='end' && S){ finish(false); }
+  else if(k==='undo' && S){ undo(); }
+  else if(k==='r-' && S){ adjust(-STEP); }
+  else if(k==='r+' && S){ adjust(STEP); }
+  else if(k==='skip' && S){ adjust(-1e9); }
   saveCfg(); lastKey='';
 });
 host.addEventListener('keydown',e=>{
   if(e.code==='Space'){ e.preventDefault(); audio(); tap(); lastKey=''; }
-  if(e.key==='p'&&R){ R.paused=!R.paused; lastKey=''; }
+  if(e.key==='p'&&S&&view==='run'){ S.paused=!S.paused; lastKey=''; }
 });
 document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>{
   speed=+b.dataset.speed; document.querySelectorAll('[data-speed]').forEach(x=>x.setAttribute('aria-pressed',x===b)); }));
