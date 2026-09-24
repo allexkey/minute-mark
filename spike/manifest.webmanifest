@@ -1,0 +1,9 @@
+{
+  "name": "Minute Mark · iOS test",
+  "short_name": "MM Test",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0E1110",
+  "theme_color": "#0E1110",
+  "icons": [{ "src": "icon.png", "sizes": "180x180", "type": "image/png" }]
+}

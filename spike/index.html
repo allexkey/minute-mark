@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MM Test">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Minute Mark · test iOS</title>
+<style>
+:root{--bg:#0E1110;--fg:#F1F4F2;--mut:#98A39B;--line:#262D29;--card:#1A1F1C;--go:#22D16A;--rest:#1D5CFF;--warn:#FF8A1F;--bad:#FF4D4D}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 -apple-system,system-ui,sans-serif}
+body{padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px)}
+h1{font-size:22px;margin:0 0 4px}
+.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-top:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 16px/1 inherit;border:0;border-radius:12px;padding:14px 16px;background:#2B332E;color:var(--fg)}
+button.on{background:var(--fg);color:var(--bg)}
+button.go{background:var(--go);color:#04140A;width:100%;font-size:20px;padding:18px}
+button.stop{background:var(--bad);color:#fff;width:100%}
+.big{text-align:center;padding:26px 10px;border-radius:14px;background:var(--card);margin-top:14px;transition:background .2s}
+.big.hit{background:var(--rest)}
+.big b{display:block;font-size:84px;line-height:1;font-variant-numeric:tabular-nums}
+.big span{font-size:18px}
+.stat{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.stat dt{color:var(--mut)} .stat dd{margin:0}
+.ok{color:var(--go)} .no{color:var(--bad)} .wa{color:var(--warn)}
+label{display:flex;gap:8px;align-items:center;font-size:15px;margin-top:8px}
+input[type=checkbox]{width:22px;height:22px}
+#log{font:12px/1.4 ui-monospace,Menlo,monospace;white-space:pre-wrap;max-height:40vh;overflow:auto;background:#050605;border-radius:10px;padding:10px;margin-top:10px}
+ol{padding-left:20px;margin:8px 0 0} li{margin-bottom:8px}
+</style>
+</head>
+<body>
+<h1>Minute Mark · test iOS</h1>
+<div class="mut">Test tehnic pentru AirPods (Media Session), sunet, voce și wake lock. Nu este aplicația.</div>
+
+<div class="card">
+  <dl class="stat" id="caps"></dl>
+</div>
+
+<div class="card">
+  <div class="mut" style="margin-bottom:8px">Mod audio</div>
+  <div class="row">
+    <button id="mA" class="on">A · AirPods</button>
+    <button id="mB">B · Cu muzică</button>
+  </div>
+  <label><input type="checkbox" id="replay" checked> A: reia redarea după „pause” (rămâne Now Playing)</label>
+  <label><input type="checkbox" id="noise"> A: zgomot aproape inaudibil în loc de liniște totală</label>
+  <label><input type="checkbox" id="voice" checked> Voce en-US („Rest”, „Beep 3”)</label>
+  <label><input type="checkbox" id="periodic" checked> Beep periodic la fiecare 20 s (test cu ecranul blocat)</label>
+</div>
+
+<div class="card"><button class="go" id="start">Pornește testul</button></div>
+
+<div class="big" id="big"><span>Apăsări AirPods / comenzi</span><b id="cnt">0</b><span id="last">—</span></div>
+
+<div class="card">
+  <div class="row" style="justify-content:space-between">
+    <strong>Log</strong>
+    <div class="row"><button id="copy">Copiază log</button><button id="clear">Șterge</button></div>
+  </div>
+  <div id="log"></div>
+</div>
+
+<div class="card">
+  <strong>Ce testezi (bifează mental, apoi trimite-mi logul)</strong>
+  <ol>
+    <li><b>Mod A, ecran deblocat.</b> Pornește muzica în Spotify, apoi „Pornește testul”. Se oprește Spotify? Apasă o dată pe AirPods: crește contorul? Încearcă și apăsare dublă și triplă.</li>
+    <li><b>Mod A, ecran blocat.</b> Blochează telefonul un minut. Se aud beep-urile la 20 s? Apare „Minute Mark” pe ecranul de blocare? Merg apăsările pe AirPods cu ecranul blocat?</li>
+    <li><b>Mod A, buton silențios activat.</b> Se aud beep-urile?</li>
+    <li><b>Mod B.</b> Reîncarcă pagina, pornește Spotify, alege B, apoi „Pornește testul”. Muzica merge mai departe? Se aud beep-urile și vocea peste ea?</li>
+    <li><b>Mod B, buton silențios activat.</b> Se aud beep-urile?</li>
+    <li><b>Wake lock.</b> Lasă telefonul 2 minute fără să-l atingi. Rămâne ecranul aprins?</li>
+    <li>Repetă 1 și 2 după <b>Share → Add to Home Screen</b>, deschizând testul de pe iconiță.</li>
+  </ol>
+</div>
+
+<div class="card"><button class="stop" id="stop">Oprește</button></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const logEl=$('log'); const T0=Date.now();
+function log(msg,cls){ const t=((Date.now()-T0)/1000).toFixed(1).padStart(6);
+  const line=document.createElement('div'); line.textContent=`${t}s  ${msg}`; if(cls) line.className=cls; logEl.prepend(line); }
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+
+function caps(){
+  const c=[
+    ['User agent', navigator.userAgent.replace(/^Mozilla\/5.0 /,'')],
+    ['Mod', standalone?'<span class="ok">instalată (standalone)</span>':'<span class="wa">în Safari</span>'],
+    ['Secure context', window.isSecureContext?'<span class="ok">da</span>':'<span class="no">nu</span>'],
+    ['mediaSession', 'mediaSession' in navigator?'<span class="ok">da</span>':'<span class="no">nu</span>'],
+    ['audioSession', 'audioSession' in navigator?`<span class="ok">da</span> (${navigator.audioSession.type})`:'<span class="no">nu</span>'],
+    ['wakeLock', 'wakeLock' in navigator?'<span class="ok">da</span>':'<span class="no">nu</span>'],
+    ['speech', 'speechSynthesis' in window?'<span class="ok">da</span>':'<span class="no">nu</span>'],
+    ['vibrate', 'vibrate' in navigator?'<span class="ok">da</span>':'<span class="no">nu</span>'],
+  ];
+  $('caps').innerHTML=c.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('');
+}
+caps();
+
+let mode='A';
+$('mA').onclick=()=>{mode='A';$('mA').classList.add('on');$('mB').classList.remove('on');};
+$('mB').onclick=()=>{mode='B';$('mB').classList.add('on');$('mA').classList.remove('on');};
+
+/* ---- audio ---- */
+let ac=null, el=null, wl=null, timer=null, meta=null, count=0, beepN=0, lastTick=Date.now(), running=false;
+function tone(f,d,t0=0,v=.3){ if(!ac) return; const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+t0;
+  o.type='square';o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+d+.02); }
+const confirmSnd=()=>{tone(990,.08);tone(660,.1,.1)};
+function say(t){ if(!$('voice').checked||!('speechSynthesis' in window)) return;
+  try{ const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; const v=speechSynthesis.getVoices().find(v=>/^en[-_]US/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u);}catch(e){ log('speech err '+e.message,'no'); } }
+
+function wavURL(noise){ // 1 s, 8 kHz, 16-bit mono
+  const sr=8000,n=sr,b=new ArrayBuffer(44+n*2),d=new DataView(b);
+  const w=(o,s)=>[...s].forEach((c,i)=>d.setUint8(o+i,c.charCodeAt(0)));
+  w(0,'RIFF');d.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);
+  d.setUint32(24,sr,true);d.setUint32(28,sr*2,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++) d.setInt16(44+i*2, noise?Math.round((Math.random()*2-1)*3):0, true);
+  return URL.createObjectURL(new Blob([b],{type:'audio/wav'}));
+}
+
+function hit(action){
+  count++; $('cnt').textContent=count; $('last').textContent=action;
+  $('big').classList.add('hit'); setTimeout(()=>$('big').classList.remove('hit'),400);
+  log(`▶ comandă media: ${action}`,'ok'); confirmSnd(); say('Rest');
+  setMeta(`Set ${count+1}`);
+}
+function setMeta(title){ try{ navigator.mediaSession.metadata=new MediaMetadata({title, artist:'Minute Mark', album:'EMOM test'}); }catch(e){} }
+
+async function start(){
+  if(running) return; running=true;
+  try{ if('audioSession' in navigator){ navigator.audioSession.type = mode==='A'?'playback':'ambient'; log(`audioSession.type = ${navigator.audioSession.type}`); } }catch(e){ log('audioSession err '+e.message,'no'); }
+  ac=new (window.AudioContext||window.webkitAudioContext)(); await ac.resume(); log(`AudioContext: ${ac.state}`);
+  tone(1320,.3); say(mode==='A'?'Mode A. Press your AirPods.':'Mode B. Music should keep playing.');
+
+  if(mode==='A'){
+    el=new Audio(wavURL($('noise').checked)); el.loop=true; el.setAttribute('playsinline','');
+    try{ await el.play(); log('audio loop: playing','ok'); }catch(e){ log('audio loop play() FAILED: '+e.message,'no'); }
+    if('mediaSession' in navigator){
+      setMeta('Set 1');
+      navigator.mediaSession.playbackState='playing';
+      const acts=['play','pause','stop','nexttrack','previoustrack','seekforward','seekbackward'];
+      for(const a of acts){
+        try{ navigator.mediaSession.setActionHandler(a, async ()=>{
+          hit(a);
+          if(a==='pause' && $('replay').checked){
+            try{ await el.play(); navigator.mediaSession.playbackState='playing'; log('  reluat redarea după pause','ok'); }
+            catch(e){ log('  reluare FAILED: '+e.message,'no'); navigator.mediaSession.playbackState='paused'; }
+          } else if(a==='pause'){ el.pause(); navigator.mediaSession.playbackState='paused'; }
+          if(a==='play'){ try{ await el.play(); navigator.mediaSession.playbackState='playing'; }catch(e){ log('  play FAILED: '+e.message,'no'); } }
+        }); log(`handler ${a}: ok`); }catch(e){ log(`handler ${a}: nesuportat`,'wa'); }
+      }
+    }
+    el.addEventListener('pause',()=>log('audio element: pause (de la sistem?)','wa'));
+    el.addEventListener('play',()=>log('audio element: play'));
+  }
+
+  if('wakeLock' in navigator){
+    try{ wl=await navigator.wakeLock.request('screen'); log('wakeLock: activ','ok'); wl.addEventListener('release',()=>log('wakeLock: eliberat','wa')); }
+    catch(e){ log('wakeLock FAILED: '+e.message,'no'); }
+  }
+
+  lastTick=Date.now();
+  timer=setInterval(()=>{
+    const now=Date.now(), gap=now-lastTick; lastTick=now;
+    if(gap>1500) log(`⚠ timer oprit ${Math.round(gap/1000)} s (fundal/ecran blocat)`,'wa');
+    const s=Math.round((now-T0)/1000);
+    if($('periodic').checked && s%20===0){ beepN++; tone(880,.12);tone(880,.12,.25);tone(1320,.4,.5); say(`Beep ${beepN}`); log(`beep #${beepN} (ac.state=${ac.state}, hidden=${document.hidden})`); }
+  },1000);
+}
+function stop(){
+  running=false; clearInterval(timer);
+  try{ el&&el.pause(); }catch(e){}
+  try{ wl&&wl.release(); }catch(e){}
+  try{ ac&&ac.close(); }catch(e){}
+  if('mediaSession' in navigator){ navigator.mediaSession.playbackState='none'; for(const a of ['play','pause','stop','nexttrack','previoustrack','seekforward','seekbackward']) try{navigator.mediaSession.setActionHandler(a,null)}catch(e){} }
+  log('— oprit —');
+}
+$('start').onclick=start; $('stop').onclick=stop;
+$('clear').onclick=()=>{logEl.textContent='';};
+$('copy').onclick=async()=>{
+  const txt=`MODE ${mode} · standalone=${standalone}\n${navigator.userAgent}\n`+[...logEl.children].reverse().map(d=>d.textContent).join('\n');
+  try{ await navigator.clipboard.writeText(txt); log('log copiat','ok'); }catch(e){ const r=document.createRange(); r.selectNodeContents(logEl); getSelection().removeAllRanges(); getSelection().addRange(r); log('selectează și copiază manual','wa'); }
+};
+document.addEventListener('visibilitychange',async()=>{
+  log(`visibility: ${document.visibilityState} (ac=${ac?ac.state:'-'})`);
+  if(document.visibilityState==='visible' && running){
+    if(ac && ac.state!=='running'){ try{ await ac.resume(); log('AudioContext reluat: '+ac.state); }catch(e){} }
+    if('wakeLock' in navigator && (!wl||wl.released)){ try{ wl=await navigator.wakeLock.request('screen'); log('wakeLock: re-activat','ok'); }catch(e){ log('wakeLock re-activare FAILED','no'); } }
+  }
+});
+if('speechSynthesis' in window) speechSynthesis.onvoiceschanged=()=>{};
+</script>
+</body>
+</html>

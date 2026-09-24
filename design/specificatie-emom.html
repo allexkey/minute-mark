@@ -1,0 +1,600 @@
+<title>Cronometru EMOM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F4F0; --surface:#FFFFFF; --ink:#111513; --muted:#59625C; --line:#D8DDD6;
+  --accent:#0E8C47; --accent-ink:#FFFFFF; --soft:#E5EBE3;
+  --work:#22D16A; --work-ink:#04140A;
+  --rest:#1D5CFF; --rest-ink:#FFFFFF;
+  --prep:#FF8A1F; --prep-ink:#1A0A00;
+  --ready:#121614; --paused:#2B2F2D;
+  --display:"Big Shoulders Display","Oswald","Arial Narrow",sans-serif;
+  --body:"Barlow","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0C0F0D; --surface:#151A17; --ink:#E9EEEA; --muted:#98A39B; --line:#2A322D;
+    --accent:#3BDB7E; --accent-ink:#04140A; --soft:#1C231F;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0C0F0D; --surface:#151A17; --ink:#E9EEEA; --muted:#98A39B; --line:#2A322D;
+  --accent:#3BDB7E; --accent-ink:#04140A; --soft:#1C231F;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body);}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:40px 80px}
+h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.02}
+h1{font-size:clamp(48px,9vw,96px);text-transform:uppercase}
+h2{font-size:clamp(30px,4.4vw,44px);text-transform:uppercase}
+h3{font-size:22px;text-transform:uppercase;letter-spacing:.03em}
+p{margin:0;max-width:66ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:19px;color:var(--muted);margin-top:18px}
+section{margin-top:72px;display:grid;gap:22px}
+.sec-hd{display:grid;gap:10px;border-top:2px solid var(--ink);padding-top:14px}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+a{color:var(--accent)}
+
+/* hero */
+.hero{display:grid;gap:14px}
+.hero h1 span{display:inline-block;padding:0 .12em;margin-left:-.06em}
+.hero .w{background:var(--work);color:var(--work-ink)}
+.hero .r{background:var(--rest);color:var(--rest-ink)}
+.hero .p{background:var(--prep);color:var(--prep-ink)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px}
+
+/* decisions */
+.decisions{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));border-top:1px solid var(--line)}
+.dec{padding:14px 16px 16px 0;border-bottom:1px solid var(--line);display:grid;gap:4px}
+.dec dt{font:500 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dec dd{margin:0;font-weight:600}
+.dec dd small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+
+/* phones */
+.phone{width:100%;aspect-ratio:9/19.2;border-radius:13% / 6.2%;background:#050605;padding:3.2%;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 18px 40px -18px rgba(0,0,0,.45);position:relative;max-width:100%}
+.phone .screen{position:absolute;inset:3.2%;border-radius:10.5% / 5%;overflow:hidden;container-type:inline-size}
+.phone .notch{position:absolute;top:4.6%;left:50%;transform:translateX(-50%);width:30%;height:3.4%;background:#050605;border-radius:99px;z-index:5}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;font-family:var(--body);user-select:none;-webkit-user-select:none}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:28px 22px}
+.gallery figure{margin:0;display:grid;gap:12px;align-content:start}
+.gallery figcaption{display:grid;gap:3px;font-size:14px;color:var(--muted)}
+.gallery figcaption b{color:var(--ink);font-weight:600;font-size:15px}
+
+/* timer screens */
+.ph-ready{background:var(--ready);color:#fff}
+.ph-work{background:var(--work);color:var(--work-ink)}
+.ph-rest{background:var(--rest);color:var(--rest-ink)}
+.ph-prep{background:var(--prep);color:var(--prep-ink)}
+.ph-paused{background:var(--paused);color:#E8ECE9}
+.top{display:flex;justify-content:space-between;align-items:center;padding:17cqw 7cqw 0;font:500 4.2cqw/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.top b{font-family:var(--display);font-weight:800;font-size:7.4cqw;letter-spacing:.02em;margin-left:1.5cqw;font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:1.4cqw;border:.5cqw solid currentColor;border-radius:99px;padding:1.2cqw 2.6cqw;font-size:3.4cqw;opacity:.85}
+.chip svg{width:3.8cqw;height:3.8cqw}
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3cqw;padding:0 6cqw}
+.lbl{font:800 8.4cqw/1 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.dial{position:relative;width:78cqw;aspect-ratio:1}
+.ring{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:5.5}
+.ring .trk{stroke:currentColor;opacity:.16}
+.ring .val{stroke:currentColor;stroke-dasharray:100;stroke-linecap:round;transition:stroke-dashoffset .12s linear}
+.dial-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.setn{font:900 40cqw/.82 var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.setn.xl{font-size:50cqw}
+.rem{font:800 11cqw/1 var(--display);font-variant-numeric:tabular-nums;margin-top:2cqw;opacity:.9}
+.foot{font:500 4.4cqw/1.3 var(--body);text-align:center;opacity:.85;min-height:2.6em}
+.bot{display:flex;justify-content:center;gap:4cqw;padding:0 7cqw 11cqw}
+.pbtn{width:17cqw;height:17cqw;border-radius:50%;border:.7cqw solid currentColor;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;opacity:.9}
+.pbtn svg{width:6cqw;height:6cqw}
+.bigbtn{flex:1;height:16cqw;border-radius:8cqw;border:0;font:800 6.4cqw/1 var(--display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.bigbtn.go{background:var(--work);color:var(--work-ink)}
+.bigbtn.ghost{background:transparent;color:inherit;border:.6cqw solid currentColor;flex:.7}
+
+/* app (non-timer) screens */
+.app{background:#0E1110;color:#F1F4F2}
+.apphd{display:flex;justify-content:space-between;align-items:baseline;padding:17cqw 7cqw 3cqw}
+.brand{font:900 11cqw/1 var(--display);letter-spacing:.04em}
+.brand i{font-style:normal;color:var(--work)}
+.lnk{font:600 4.4cqw/1 var(--body);color:var(--work);cursor:pointer;background:none;border:0;padding:0}
+.fields{flex:1;display:flex;flex-direction:column;gap:5.5cqw;padding:3cqw 7cqw}
+.flab{font:500 3.6cqw/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#98A39B;margin-bottom:2cqw}
+.stepper{display:flex;align-items:center;justify-content:space-between;background:#1A1F1C;border-radius:5cqw;padding:2cqw}
+.stepper button{width:13cqw;height:13cqw;border-radius:4cqw;border:0;background:#262D29;color:#fff;font:600 7cqw/1 var(--body);cursor:pointer}
+.stepper span{font:900 13cqw/1 var(--display);font-variant-numeric:tabular-nums}
+.stepper.sm span{font-size:10cqw}
+.hint{font-size:3.6cqw;line-height:1.35;color:#98A39B;margin-top:1.8cqw}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:#1A1F1C;border-radius:5cqw;padding:1.4cqw;gap:1.4cqw}
+.seg button{border:0;background:transparent;color:#C9D1CC;border-radius:3.8cqw;padding:3cqw 1cqw;font:600 4.2cqw/1.1 var(--body);display:flex;align-items:center;justify-content:center;gap:1.6cqw;cursor:pointer}
+.seg button svg{width:4.4cqw;height:4.4cqw;flex:none}
+.seg button.on{background:#F1F4F2;color:#0E1110}
+.startbar{padding:0 7cqw 11cqw}
+.startbar .bigbtn{width:100%;height:19cqw;font-size:9cqw;border-radius:10cqw}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw;padding:2cqw 7cqw}
+.stat{background:#1A1F1C;border-radius:4cqw;padding:3cqw}
+.stat b{display:block;font:900 9cqw/1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font:500 3.2cqw/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#98A39B}
+.chart{margin:4cqw 7cqw 0;height:30cqw;display:flex;align-items:flex-end;gap:1cqw;position:relative;border-bottom:.4cqw solid #3A423D}
+.chart .bar{flex:1;background:var(--work);border-radius:1cqw 1cqw 0 0;min-height:1.5cqw}
+.chart .bar.miss{background:repeating-linear-gradient(45deg,#3A423D 0 1cqw,#262D29 1cqw 2cqw);height:100%!important}
+.chart .bar.slow{background:var(--prep)}
+.chart-cap{display:flex;justify-content:space-between;padding:1.6cqw 7cqw 0;font:500 3.2cqw/1 var(--mono);color:#98A39B}
+.note{margin:4cqw 7cqw 0;background:#1A1F1C;border-radius:4cqw;padding:3.4cqw;font-size:4cqw;line-height:1.35;color:#DDE3DF;min-height:18cqw}
+.note em{color:#98A39B;font-style:normal;display:block;font:500 3.2cqw/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.6cqw}
+.row2{display:flex;gap:3cqw;padding:5cqw 7cqw 11cqw;margin-top:auto}
+.hist{flex:1;padding:2cqw 7cqw;display:flex;flex-direction:column}
+.hrow{padding:3.6cqw 0;border-bottom:.3cqw solid #262D29;display:grid;gap:1.2cqw}
+.hrow .h1{display:flex;justify-content:space-between;align-items:baseline;font:600 4.4cqw/1.1 var(--body)}
+.hrow .h1 b{font:900 7cqw/1 var(--display);font-variant-numeric:tabular-nums}
+.hrow .h2{font:500 3.3cqw/1.3 var(--mono);color:#98A39B}
+.hrow .h3{font-size:3.8cqw;color:#C9D1CC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:4}
+.flash.go{animation:fl .45s ease-out}
+@keyframes fl{0%{opacity:.85}100%{opacity:0}}
+.undo{position:absolute;left:50%;bottom:32cqw;transform:translateX(-50%);background:rgba(0,0,0,.25);color:#fff;border:0;border-radius:99px;padding:2.4cqw 4.6cqw;font:600 3.8cqw/1 var(--body);cursor:pointer;z-index:3}
+
+/* live prototype */
+.live{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:40px;align-items:start}
+.live .phone{max-width:300px}
+.live .screen{cursor:pointer}
+.ctrls{display:grid;gap:18px}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tbtn{font:600 14px/1 var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 14px;border-radius:10px;cursor:pointer}
+.tbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tbtn:focus-visible,.pbtn:focus-visible,.bigbtn:focus-visible,.seg button:focus-visible,.stepper button:focus-visible,.lnk:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.steps{display:grid;gap:10px;padding:0;margin:0;list-style:none;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.steps li::before{counter-increment:s;content:counter(s);font:800 18px/1.3 var(--display);color:var(--muted)}
+.kbd{font:500 12px/1 var(--mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:3px 6px;background:var(--surface)}
+
+/* timeline */
+.tl{display:grid;gap:10px}
+.tl-bar{display:flex;height:64px;border-radius:12px;overflow:hidden;font:800 18px/1 var(--display);letter-spacing:.06em;text-transform:uppercase}
+.tl-bar div{display:flex;align-items:flex-end;padding:10px 12px;min-width:0;overflow:hidden;white-space:nowrap}
+.tl-marks{position:relative;height:118px}
+.tl-mark{position:absolute;top:0;display:grid;gap:4px;font-size:13.5px;line-height:1.3;max-width:34%;padding-left:10px;border-left:2px solid var(--ink)}
+.tl-mark b{font:500 12px/1 var(--mono);color:var(--muted)}
+.tl-scale{display:flex;justify-content:space-between;font:500 12px/1 var(--mono);color:var(--muted)}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--soft)}
+tr:last-child td{border-bottom:0}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+
+/* modes */
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.mode{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:12px;align-content:start}
+.mode ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.tag{justify-self:start;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:6px 9px;border-radius:6px;background:var(--soft);color:var(--muted)}
+
+.cons{display:grid;gap:0;border-top:1px solid var(--line)}
+.con{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px 28px;padding:16px 0;border-bottom:1px solid var(--line)}
+.con b{font-weight:600}
+.sev{font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:5px;margin-left:8px;vertical-align:2px}
+.sev.hi{background:#FFE1E1;color:#8A1414}
+.sev.md{background:#FFEFD9;color:#7A3F00}
+.sev.ok{background:#DDF6E6;color:#0B5A2C}
+
+.props{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.prop{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:10px;align-content:start}
+.prop h3{font-size:20px}
+.prop .mine{border-left:3px solid var(--accent);padding-left:12px;font-size:15px}
+.prop .mine b{display:block;font:500 11px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+
+pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;overflow-x:auto;margin:0}
+
+@media (max-width:760px){
+  .live{grid-template-columns:1fr}
+  .live .phone{margin:0 auto;max-width:280px}
+  .con{grid-template-columns:1fr}
+  .tl-mark{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .flash.go{animation:none}
+  .ring .val{transition:none}
+}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Specificație de design · v0.3 · 23 septembrie 2026 · aprobată, testată pe iOS 26.6.1</div>
+  <h1><span class="w">Work.</span> <span class="r">Rest.</span> <span class="p">Next&nbsp;set.</span></h1>
+  <p class="lead">Un cronometru EMOM pentru sală, sub formă de PWA, gândit pentru iPhone. Interfața și vocea sunt în engleză. La fiecare minut: un beep, vocea care anunță setul („Set 9”), iar pe ecran numărul setului și timpul total al sesiunii. Tot ecranul își schimbă culoarea, ca să-l poți citi de pe podea. Marchezi sfârșitul setului cu o atingere pe ecran sau cu o apăsare pe AirPods.</p>
+</header>
+
+<section id="decizii">
+  <div class="sec-hd"><div class="eyebrow">Ce am stabilit</div><h2>Decizii luate</h2></div>
+  <dl class="decisions">
+    <div class="dec"><dt>Format</dt><dd>EMOM deschis<small>Merge până apeși Stop. Ținta de seturi e opțională.</small></dd></div>
+    <div class="dec"><dt>Interval</dt><dd>Implicit 1:00<small>Configurabil între 0:30 și 5:00, cu pas de 15 s</small></dd></div>
+    <div class="dec"><dt>Start</dt><dd>10 s de pregătire<small>„Get ready”, apoi 3-2-1</small></dd></div>
+    <div class="dec"><dt>Semnal la minut</dt><dd>Beep + voce<small>3 beep-uri scurte, apoi beep lung și „Set 9”</small></dd></div>
+    <div class="dec"><dt>Ecran</dt><dd>Set în inel, timp rămas, total<small>Inelul se golește pe parcursul minutului</small></dd></div>
+    <div class="dec"><dt>Stil</dt><dd>Full-color pe faze<small>Verde = WORK, albastru = REST, portocaliu = ultimele 5 s</small></dd></div>
+    <div class="dec"><dt>Sfârșit de set</dt><dd>Tap oriunde sau AirPods<small>Se măsoară durata fiecărui set</small></dd></div>
+    <div class="dec"><dt>Pauză</dt><dd>Îngheață tot<small>Și minutul curent, și totalul</small></dd></div>
+    <div class="dec"><dt>Audio</dt><dd>Mod comutabil<small>„AirPods” sau „With music”</small></dd></div>
+    <div class="dec"><dt>Limbă</dt><dd>Engleză, peste tot<small>Etichete, voce, mesaje (voce iOS en-US, ex. „Ava”)</small></dd></div>
+    <div class="dec"><dt>Istoric</dt><dd>Local, cu note<small>Fără cont; datele rămân pe telefon</small></dd></div>
+    <div class="dec"><dt>Platformă</dt><dd>iPhone, PWA instalată<small>Adăugată pe ecranul principal. App Store mai târziu, prin Capacitor.</small></dd></div>
+    <div class="dec"><dt>Nume</dt><dd>Minute Mark<small>Numele de sub iconiță</small></dd></div>
+  </dl>
+</section>
+
+<section id="prototip">
+  <div class="sec-hd"><div class="eyebrow">Încearcă-l</div><h2>Prototip interactiv</h2></div>
+  <div class="live">
+    <div class="phone"><div class="notch"></div><div class="screen" id="live" tabindex="0" aria-label="Prototip cronometru"></div></div>
+    <div class="ctrls">
+      <p>Prototipul e funcțional: pornește sesiunea, atinge ecranul când „termini” setul și urmărește cum se schimbă fazele. Folosește viteza ×10 ca să vezi mai multe minute rapid. Sunetul pornește după prima atingere; vocea folosește sinteza vocală a browserului.</p>
+      <div class="ctrl-row">
+        <span class="eyebrow">Viteză</span>
+        <button class="tbtn" data-speed="1" aria-pressed="true">×1</button>
+        <button class="tbtn" data-speed="10" aria-pressed="false">×10</button>
+        <span class="eyebrow" style="margin-left:12px">Sunet</span>
+        <button class="tbtn" id="snd" aria-pressed="true">Pornit</button>
+      </div>
+      <ol class="steps">
+        <li><span>Alege intervalul și modul audio, apoi apasă <b>START</b>.</span></li>
+        <li><span>10 secunde de pregătire pe negru (GET READY), apoi ecranul devine <b>verde</b>: SET 1.</span></li>
+        <li><span>Atinge ecranul (sau <span class="kbd">Space</span>) când termini setul: ecranul devine <b>albastru</b> (REST). Timp de 3 s poți apăsa UNDO.</span></li>
+        <li><span>În ultimele 5 secunde ecranul devine <b>portocaliu</b>; urmează 3 beep-uri, flash, apoi setul următor.</span></li>
+        <li><span>Butonul ⏸ îngheață tot. Sesiunea se încheie din ecranul de pauză, cu <b>END</b>.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="ecrane">
+  <div class="sec-hd"><div class="eyebrow">Toate stările</div><h2>Ecrane</h2></div>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<section id="minut">
+  <div class="sec-hd"><div class="eyebrow">Exemplu: setul 9, terminat la 0:34</div><h2>Anatomia unui minut</h2></div>
+  <div class="tl">
+    <div class="tl-bar" role="img" aria-label="Minut: work verde 0-34 s, rest albastru 34-55 s, pregătire portocalie 55-60 s">
+      <div style="flex:34;background:var(--work);color:var(--work-ink)">Work</div>
+      <div style="flex:21;background:var(--rest);color:var(--rest-ink)">Rest</div>
+      <div style="flex:5;background:var(--prep);color:var(--prep-ink)">3·2·1</div>
+    </div>
+    <div class="tl-scale"><span>0:00</span><span>0:15</span><span>0:30</span><span>0:45</span><span>1:00</span></div>
+    <div class="tl-marks">
+      <div class="tl-mark" style="left:0"><b>0 s</b>Beep lung, flash, „Set 9”</div>
+      <div class="tl-mark" style="left:calc(34/60*100%)"><b>34 s · tap / AirPods</b>Sunet de confirmare, „Rest”; durata setului: 34 s</div>
+      <div class="tl-mark" style="left:calc(55/60*100% - 2px);transform:translateX(-100%);border-left:0;border-right:2px solid var(--ink);padding:0 10px 0 0;text-align:right"><b>55 s → 59 s</b>Portocaliu, beep-uri la 57, 58, 59 s</div>
+    </div>
+    <p class="muted">Dacă nu marchezi setul, ecranul rămâne verde până la secunda 55. În istoric, setul apare ca nemarcat, dar tot se numără.</p>
+  </div>
+</section>
+
+<section id="sunet">
+  <div class="sec-hd"><div class="eyebrow">Semnale</div><h2>Sunet și voce</h2></div>
+  <p>Regula: <b>sunetul spune „ce urmează”, vocea spune „unde ești”.</b> Beep-urile sunt tonuri sintetizate, scurte și ascuțite, care se aud peste muzica din sală. Vocea folosește sinteza vocală a iPhone-ului, în engleză (en-US).</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Moment</th><th>Sunet</th><th>Voce</th><th>Ecran</th></tr></thead>
+    <tbody>
+      <tr><td>Start</td><td>—</td><td>“Get ready”</td><td><span class="sw" style="background:var(--ready)"></span>Negru, 10 → 1</td></tr>
+      <tr><td>Ultimele 3 s (pregătire și fiecare minut)</td><td>3 beep-uri scurte · 880 Hz · 0,12 s</td><td>—</td><td>Cifre mari 3, 2, 1</td></tr>
+      <tr><td>Minut nou</td><td>Beep lung · 1320 Hz · 0,6 s</td><td>“Set 9”</td><td><span class="sw" style="background:var(--work)"></span>Flash alb, apoi verde</td></tr>
+      <tr><td>Tap / AirPods = gata setul</td><td>Două note descendente (confirmare)</td><td>“Rest” <span class="muted">(opțional)</span></td><td><span class="sw" style="background:var(--rest)"></span>Albastru</td></tr>
+      <tr><td>Ultimele 5 s</td><td>—</td><td>—</td><td><span class="sw" style="background:var(--prep)"></span>Portocaliu</td></tr>
+      <tr><td>PAUSE / RESUME</td><td>Un ton scurt</td><td>“Paused” / “Resuming”</td><td><span class="sw" style="background:var(--paused)"></span>Gri</td></tr>
+      <tr><td>END</td><td>Acord final (3 note ascendente)</td><td>“Session complete. 14 sets.”</td><td>Rezumat</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Pe ecran și în voce, faza albastră se numește <b>REST</b>, iar oprirea manuală se numește <b>PAUSED</b>. Două cuvinte diferite, ca să nu se confunde.</p>
+</section>
+
+<section id="airpods">
+  <div class="sec-hd"><div class="eyebrow">Limitare iOS, rezolvată prin design</div><h2>AirPods și muzică</h2></div>
+  <p>Pe iPhone, apăsarea pe AirPods ajunge doar la aplicația care deține „Now Playing”. O PWA nu poate să lase muzica să cânte și să primească în același timp comenzile de la AirPods. De aceea, ecranul de start are un comutator cu două moduri, iar ultima alegere se ține minte.</p>
+  <div class="modes">
+    <div class="mode">
+      <span class="tag">Mod 1</span>
+      <h3>AirPods</h3>
+      <ul>
+        <li>Aplicația preia „Now Playing” și redă în fundal un sunet silențios.</li>
+        <li>O apăsare pe AirPods înseamnă „gata setul”.</li>
+        <li>Muzica din alte aplicații <b>se oprește</b>.</li>
+        <li>Beep-urile și vocea se aud cu ecranul blocat și cu butonul de silențios activat <i>(testat)</i>.</li>
+        <li>Pe ecranul de blocare apare „Set 8 · 0:18”.</li>
+      </ul>
+    </div>
+    <div class="mode">
+      <span class="tag">Mod 2</span>
+      <h3>With music</h3>
+      <ul>
+        <li>Beep-urile și vocea se mixează peste Spotify sau Apple Music, iar muzica scade scurt în volum.</li>
+        <li>Setul se marchează doar cu tap pe ecran.</li>
+        <li>O apăsare pe AirPods pune pe pauză <b>muzica</b>, nu cronometrul.</li>
+        <li>Beep-urile se aud și cu butonul de silențios activat <i>(testat, contrar așteptărilor)</i>, deci nu mai e nevoie de avertisment.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="ios">
+  <div class="sec-hd"><div class="eyebrow">Ce ne impune iPhone-ul</div><h2>Constrângeri și soluții</h2></div>
+  <div class="cons">
+    <div class="con"><div><b>Ecranul se stinge</b><span class="sev ok">rezolvat</span></div><p>Ecranul rămâne aprins cât rulează o sesiune (Screen Wake Lock, funcționează corect în PWA din iOS 18.4).</p></div>
+    <div class="con"><div><b>Telefonul blocat manual</b><span class="sev ok">rezolvat în modul A</span></div><p>Testat: în modul AirPods codul rulează și cu ecranul blocat, iar beep-urile și vocea se aud. iOS rărește însă timerele la ~2 s, de aceea sunetele se programează dinainte pe ceasul audio. În modul With music, comportamentul cu ecranul blocat nu a fost testat încă; până atunci, ecranul rămâne aprins prin wake lock.</p></div>
+    <div class="con"><div><b>Fără vibrații</b><span class="sev md">acceptat</span></div><p>iOS nu permite vibrații în PWA. Semnalele sunt doar sonore și vizuale, de aceea culorile și flash-ul sunt atât de puternice.</p></div>
+    <div class="con"><div><b>Sunetul pornește doar după o atingere</b><span class="sev ok">rezolvat</span></div><p>Butonul Start deblochează audio-ul și vocea pentru toată sesiunea.</p></div>
+    <div class="con"><div><b>Media Session (AirPods)</b><span class="sev ok">testat ✓</span></div><p>Funcționează în aplicația instalată, inclusiv cu ecranul blocat. Apăsarea simplă trimite „pause”, iar aplicația reia imediat redarea și rămâne „Now Playing”. Apăsarea dublă trimite „nexttrack”, un eveniment separat. Pe ecranul de blocare apare „Set 2 · Minute Mark”.</p></div>
+    <div class="con"><div><b>Datele locale pot fi șterse</b><span class="sev md">atenuat</span></div><p>iOS poate curăța datele unei PWA nefolosite mult timp. Istoricul se poate exporta ca fișier (JSON/CSV) din setări.</p></div>
+  </div>
+</section>
+
+<section id="nativ">
+  <div class="sec-hd"><div class="eyebrow">Etapa 2 · opțional</div><h2>Varianta App Store</h2></div>
+  <p>Construim întâi PWA-ul și îl testăm în sală. Dacă vrem apoi aplicația în App Store, același cod se împachetează cu <b>Capacitor</b> într-o aplicație iOS. Designul nu se schimbă, doar se adaugă funcții native. Aceste funcții ajută și la review, pentru că Apple respinge aplicațiile care sunt doar un site într-o ramă (regula 4.2, „Minimum Functionality”).</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Funcție</th><th>PWA (etapa 1)</th><th>Nativ (etapa 2)</th><th>Impact în design</th></tr></thead>
+    <tbody>
+      <tr><td>Sunet cu ecranul blocat</td><td>Nesigur</td><td>Sigur (background audio)</td><td>Dispare mesajul „You were away…”; wake lock rămâne opțional</td></tr>
+      <tr><td>Vibrații</td><td>Nu</td><td>Da (haptics)</td><td>Vibrație puternică la minut nou, dublă la 3-2-1, scurtă la tap (confirmare)</td></tr>
+      <tr><td>Live Activity / Dynamic Island</td><td>Nu</td><td>Da</td><td>Pe ecranul de blocare: „SET 8 · 0:18 · REST”, în culoarea fazei</td></tr>
+      <tr><td>AirPods ca telecomandă</td><td>Cu ciudățenii</td><td>Stabil</td><td>Niciunul, doar funcționează mai sigur</td></tr>
+      <tr><td>AirPods și muzică în paralel</td><td>Nu</td><td>Nu</td><td>Limită iOS: comutatorul AirPods / With music rămâne</td></tr>
+      <tr><td>Stocarea istoricului</td><td>Poate fi ștearsă de iOS</td><td>Permanentă</td><td>Exportul rămâne ca backup</td></tr>
+      <tr><td>Apple Health</td><td>Nu</td><td>Opțional</td><td>Comutator în setări: „Save to Apple Health” (antrenament HIIT)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Ce presupune publicarea: cont Apple Developer (99 USD/an), un Mac cu Xcode sau un serviciu de build în cloud, iconiță, capturi de ecran, politică de confidențialitate („nu colectăm date”) și review-ul Apple (de obicei 1–3 zile).</p>
+</section>
+
+<section id="test-ios">
+  <div class="sec-hd"><div class="eyebrow">23 septembrie 2026 · iPhone, iOS 26.6.1</div><h2>Rezultatele testului pe iOS</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Ce am testat</th><th>Rezultat</th><th>Consecință</th></tr></thead>
+    <tbody>
+      <tr><td>AirPods ca telecomandă (aplicația instalată)</td><td class="ok">✓ merge, și cu ecranul blocat</td><td>Modul AirPods rămâne așa cum e în design</td></tr>
+      <tr><td>Rămâne „Now Playing” după apăsare</td><td>✓ reluarea redării după „pause” reușește</td><td>Apăsările se pot repeta la nesfârșit</td></tr>
+      <tr><td>Apăsare dublă pe AirPods</td><td>✓ ajunge ca „nexttrack”</td><td>Apăsarea dublă devine UNDO</td></tr>
+      <tr><td>Ecran de blocare</td><td>✓ „Set 2 · Minute Mark”</td><td>Titlul se actualizează: „Set 8 · Rest · 0:18”</td></tr>
+      <tr><td>Sunet și voce cu ecranul blocat (modul A)</td><td>✓ se aud</td><td>Timerele sunt rărite la ~2 s, deci sunetele se programează pe ceasul audio</td></tr>
+      <tr><td>Beep-uri peste muzică (modul B)</td><td>✓ muzica merge, beep-urile se aud peste</td><td>Modul With music rămâne așa cum e în design</td></tr>
+      <tr><td>Butonul de silențios activat (A și B)</td><td>✓ se aud în ambele moduri</td><td>Eliminăm avertismentul de pe ecranul de start</td></tr>
+      <tr><td>Wake lock (Safari și aplicația instalată)</td><td>✓ ecranul rămâne aprins peste 2 minute</td><td>—</td></tr>
+      <tr><td>Modul B cu ecranul blocat</td><td class="muted">netestat</td><td>De verificat pe prima versiune a aplicației</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="stari">
+  <div class="sec-hd"><div class="eyebrow">Pentru dezvoltare</div><h2>Harta stărilor</h2></div>
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --> Setup
+  Setup --> GetReady : START
+  GetReady --> Work : după 10 s
+  Work --> Rest : tap / AirPods
+  Rest --> Work : UNDO (3 s) / dublu AirPods
+  Work --> Last5 : rămân 5 s
+  Rest --> Last5 : rămân 5 s
+  Last5 --> Work : minut nou
+  Work --> Paused : ⏸
+  Rest --> Paused : ⏸
+  Last5 --> Paused : ⏸
+  Paused --> Work : RESUME
+  Paused --> Summary : END
+  Summary --> History : SAVE
+  History --> Setup
+</pre>
+</section>
+
+<section id="propuneri">
+  <div class="sec-hd"><div class="eyebrow">Acceptate pe 23 septembrie 2026</div><h2>Rafinări</h2></div>
+  <p>Toate cele 8 propuneri au fost acceptate și fac parte din specificație.</p>
+  <div class="props">
+    <div class="prop"><h3>Stop fără dialog</h3><p>Ai ales să nu avem protecție la atingeri. Totuși, un tap accidental pe Stop ți-ar pierde sesiunea.</p><div class="mine"><b>Decis ✓</b>Nu există buton Stop pe ecranul de lucru, doar ⏸. „END” apare numai în ecranul de pauză. Sunt doi pași naturali, fără dialog de confirmare.</div></div>
+    <div class="prop"><h3>Anulare marcaj</h3><p>O atingere accidentală (sau cu prosopul) ar trece setul pe albastru înainte să-l termini.</p><div class="mine"><b>Decis ✓</b>Un buton „UNDO” vizibil 3 secunde după marcare. Pe AirPods: <b>apăsare simplă = gata setul, apăsare dublă = UNDO</b> (evenimente distincte, confirmate în test).</div></div>
+    <div class="prop"><h3>Anunț periodic</h3><p>La sesiuni lungi e util să știi cât a trecut fără să te uiți la ecran.</p><div class="mine"><b>Decis ✓</b>La fiecare 5 minute, vocea spune „10 minutes” în locul lui „Set 10”. Se poate dezactiva din setări.</div></div>
+    <div class="prop"><h3>Ce se întâmplă la țintă</h3><p>Dacă setezi 12 seturi, ce face aplicația după setul 12?</p><div class="mine"><b>Decis ✓</b>La finalul minutului 12 cântă acordul final, vocea spune „Target reached” și apare rezumatul. Din rezumat poți alege „KEEP GOING” dacă vrei să mai faci câteva seturi.</div></div>
+    <div class="prop"><h3>Mod landscape</h3><p>Telefonul sprijinit pe lateral, pe un aparat sau pe podea.</p><div class="mine"><b>Decis ✓</b>În landscape, numărul setului ocupă jumătatea stângă a ecranului, iar timpul rămas și totalul pe cea dreaptă. Cifrele sunt cu aproximativ 40% mai mari decât în portrait.</div></div>
+    <div class="prop"><h3>Structura notei</h3><p>Nota liberă e flexibilă, dar nu poți filtra istoricul după exercițiu.</p><div class="mine"><b>Decis ✓</b>Un câmp opțional „Exercise” (cu sugestii din ce ai scris înainte) și o notă liberă. Istoricul se poate filtra apoi după exercițiu.</div></div>
+    <div class="prop"><h3>Grafic în rezumat</h3><p>Durata fiecărui set, ca bare. Setul cel mai lent apare în portocaliu, iar seturile nemarcate sunt hașurate.</p><div class="mine"><b>Decis ✓</b>Păstrăm graficul: e principalul câștig al marcajului prin tap și îți arată când începe oboseala.</div></div>
+    <div class="prop"><h3>Numele aplicației</h3><p>Numele apare pe iconița de pe ecranul principal (maximum ~12 caractere).</p><div class="mine"><b>Decis ✓</b>„Minute Mark”.</div></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+const I = {
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
+  pods:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 4a3 3 0 0 1 3 3v2a3 3 0 0 1-2 2.8V19a1.5 1.5 0 0 1-3 0V7a3 3 0 0 1 2-3z"/><path d="M17 4a3 3 0 0 0-3 3v2a3 3 0 0 0 2 2.8V19a1.5 1.5 0 0 0 3 0V7a3 3 0 0 0-2-3z"/></svg>',
+  music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>'
+};
+const fmt = s => { s=Math.max(0,Math.floor(s)); const h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60;
+  return h? `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; };
+const fmtI = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+const ring = f => `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="val" pathLength="100" style="stroke-dashoffset:${(100-f*100).toFixed(2)}"/></svg>`;
+const modeChip = m => `<span class="chip">${m==='airpods'?I.pods+'AirPods':I.music+'Music'}</span>`;
+
+function timerScr(o){
+  return `<div class="scr ${o.cls}">
+    <div class="top"><span>Total<b>${o.total}</b></span>${modeChip(o.mode||'airpods')}</div>
+    <div class="mid">
+      <div class="lbl">${o.label}</div>
+      <div class="dial">${ring(o.frac)}<div class="dial-in"><div class="setn ${o.xl?'xl':''}">${o.big}</div>${o.rem?`<div class="rem">${o.rem}</div>`:''}</div></div>
+      <div class="foot">${o.foot||''}</div>
+    </div>
+    ${o.undo?'<button class="undo" data-act="undo">Undo</button>':''}
+    <div class="bot">${o.bot || `<button class="pbtn" data-act="pause" aria-label="Pause">${I.pause}</button>`}</div>
+  </div>`;
+}
+function setupScr(c){
+  const warn = c.mode==='music' ? 'Cues play over your music. Press your AirPods to pause the music, tap the screen to finish a set.' : 'Other music will stop. Press your AirPods to finish a set.';
+  return `<div class="scr app">
+    <div class="apphd"><span class="brand" style="font-size:9.5cqw">MINUTE MARK<i>.</i></span><button class="lnk" data-act="hist">History</button></div>
+    <div class="fields">
+      <div><div class="flab">Interval</div><div class="stepper"><button data-act="int-" aria-label="Decrease interval">−</button><span>${fmtI(c.interval)}</span><button data-act="int+" aria-label="Increase interval">+</button></div></div>
+      <div><div class="flab">Target sets</div><div class="stepper sm"><button data-act="tg-" aria-label="Decrease target">−</button><span>${c.target||'∞'}</span><button data-act="tg+" aria-label="Increase target">+</button></div><div class="hint">${c.target?`Stops after ${c.target} sets`:'No target: runs until you stop'}</div></div>
+      <div><div class="flab">Audio</div><div class="seg"><button class="${c.mode==='airpods'?'on':''}" data-act="m-air">${I.pods}AirPods</button><button class="${c.mode==='music'?'on':''}" data-act="m-mus">${I.music}With music</button></div><div class="hint">${warn}</div></div>
+    </div>
+    <div class="startbar"><button class="bigbtn go" data-act="start">Start</button></div>
+  </div>`;
+}
+function summaryScr(d){
+  const marked = d.durs.filter(x=>x!=null);
+  const avg = marked.length? Math.round(marked.reduce((a,b)=>a+b,0)/marked.length) : null;
+  const mx = marked.length? Math.max(...marked):0;
+  const bars = d.durs.map(x=> x==null? '<div class="bar miss" title="not marked"></div>' : `<div class="bar ${x===mx&&marked.length>2?'slow':''}" style="height:${Math.max(4,x/d.interval*100)}%"></div>`).join('');
+  return `<div class="scr app">
+    <div class="apphd"><span class="brand" style="font-size:9cqw">DONE<i>.</i></span><span class="hint" style="margin:0">${d.when}</span></div>
+    <div class="stats">
+      <div class="stat"><b>${d.durs.length}</b><span>Sets</span></div>
+      <div class="stat"><b>${d.total}</b><span>Total</span></div>
+      <div class="stat"><b>${avg!=null?avg+'s':'—'}</b><span>Avg set</span></div>
+    </div>
+    <div class="chart">${bars}</div>
+    <div class="chart-cap"><span>Set 1</span><span>set time / ${fmtI(d.interval)}</span><span>${d.durs.length}</span></div>
+    <div class="note"><em>Exercise · note</em>${d.note}</div>
+    <div class="row2"><button class="bigbtn ghost" data-act="discard">Discard</button><button class="bigbtn go" data-act="save">Save</button></div>
+  </div>`;
+}
+function historyScr(rows){
+  return `<div class="scr app">
+    <div class="apphd"><span class="brand" style="font-size:9cqw">HISTORY</span><button class="lnk" data-act="back">Back</button></div>
+    <div class="hist">${rows.map(r=>`<div class="hrow"><div class="h1"><span>${r.d}</span><b>${r.s} sets</b></div><div class="h2">${r.t} · interval ${r.i} · avg ${r.a}</div><div class="h3">${r.n}</div></div>`).join('')}</div>
+  </div>`;
+}
+const HIST = [
+  {d:'Today, 07:45',s:14,t:'14:00',i:'1:00',a:'38s',n:'Push-ups × 15 · last 3 were tough'},
+  {d:'Mon, Sep 21',s:20,t:'20:00',i:'1:00',a:'31s',n:'Kettlebell swings 16 kg × 12'},
+  {d:'Fri, Sep 18',s:10,t:'15:00',i:'1:30',a:'52s',n:'Pull-ups × 6'},
+  {d:'Wed, Sep 16',s:12,t:'12:00',i:'1:00',a:'40s',n:'Burpees × 10'},
+  {d:'Mon, Sep 14',s:16,t:'16:00',i:'1:00',a:'29s',n:'Goblet squats 20 kg × 10'}
+];
+
+/* static gallery */
+const G = [
+  ['Start', 'Interval, țintă opțională, mod audio. Ultimele setări se țin minte.', setupScr({interval:60,target:0,mode:'airpods'})],
+  ['Get ready', '10 s pe negru. Timp să lași telefonul jos.', timerScr({cls:'ph-ready',label:'Get ready',big:'7',xl:1,frac:.7,total:'00:00',foot:'Set 1 starts soon'})],
+  ['Work (verde)', 'Numărul setului în inel, timpul până la următorul minut sub el.', timerScr({cls:'ph-work',label:'Set',big:'8',rem:'0:42',frac:.7,total:'07:18',foot:'Tap anywhere when done'})],
+  ['Rest (albastru)', 'După tap sau AirPods. Se afișează durata setului.', timerScr({cls:'ph-rest',label:'Rest',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8: 34 s · next: set 9'})],
+  ['Ultimele 5 s', 'Portocaliu, beep-uri la 3, 2, 1.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',xl:1,frac:.05,total:'07:57',foot:'Get ready'})],
+  ['Paused', 'Totul e înghețat. Singurul loc din care poți termina sesiunea.', timerScr({cls:'ph-paused',label:'Paused',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8 · rest',bot:'<button class="bigbtn ghost">End</button><button class="bigbtn go">Resume</button>'})],
+  ['Summary', 'Durata fiecărui set, cel mai lent în portocaliu. Notă înainte de salvare.', summaryScr({interval:60,when:'Sep 23 · 07:45',total:'14:00',durs:[24,26,27,29,30,31,33,34,null,37,39,42,46,51],note:'Push-ups × 15 · last 3 sets were tough'})],
+  ['History', 'Toate sesiunile, cele mai noi primele, salvate local.', historyScr(HIST)]
+];
+document.getElementById('gallery').innerHTML = G.map(([t,c,h])=>`<figure><div class="phone" aria-hidden="true"><div class="notch"></div><div class="screen">${h}</div></div><figcaption><b>${t}</b>${c}</figcaption></figure>`).join('');
+
+/* ---------- live prototype ---------- */
+const host = document.getElementById('live');
+const flash = document.createElement('div'); flash.className='flash';
+const body = document.createElement('div'); body.style.cssText='position:absolute;inset:0';
+host.append(body, flash);
+
+let cfg = {interval:60,target:0,mode:'airpods'};
+try{ const s=JSON.parse(localStorage.getItem('emom-cfg')||'null'); if(s) cfg=Object.assign(cfg,s);}catch(e){}
+const saveCfg=()=>{try{localStorage.setItem('emom-cfg',JSON.stringify(cfg))}catch(e){}};
+let view='setup', speed=1, soundOn=true, R=null, last=performance.now(), lastKey='', summary=null;
+
+let ac=null;
+function audio(){ if(!ac){ try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(ac&&ac.state==='suspended') ac.resume(); }
+function tone(f,d,t0=0,v=.25){ if(!soundOn||!ac) return; try{ const o=ac.createOscillator(), g=ac.createGain(), t=ac.currentTime+t0;
+  o.type='square'; o.frequency.value=f; g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.001,t+d); o.connect(g).connect(ac.destination); o.start(t); o.stop(t+d+.02);}catch(e){} }
+const short=()=>tone(880,.12), long=()=>tone(1320,.6,0,.3), confirm=()=>{tone(990,.08);tone(660,.1,.1)}, fin=()=>{tone(660,.15);tone(880,.15,.16);tone(1320,.4,.32)};
+function say(t){ if(!soundOn||speed>1||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US';
+  const v=speechSynthesis.getVoices().find(v=>/^en-US/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u);}catch(e){} }
+function doFlash(){ flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go'); }
+
+function start(){ audio(); R={phase:'ready',ready:10000,sess:0,set:0,durs:[],tapped:{},paused:false,prevSec:11,undoUntil:-1}; view='run'; say('Get ready'); }
+function newSet(n){ R.set=n; R.durs[n-1]=null; long(); doFlash(); say(n%5===0&&n>0&&cfg.interval===60?`${n} minutes`:`Set ${n}`); }
+function finish(){ const n=R.set; summary={interval:cfg.interval,when:'Just now',total:fmt(R.sess/1000),durs:R.durs.slice(0,n),note:'Add the exercise and any notes…'}; fin(); say(`Session complete. ${n} ${n===1?'set':'sets'}.`); view='summary'; R=null; }
+
+function tick(now){
+  const dt=(now-last)*speed; last=now;
+  if(view==='run' && R && !R.paused){
+    const I=cfg.interval*1000;
+    if(R.phase==='ready'){
+      R.ready-=dt; const s=Math.ceil(R.ready/1000);
+      if(s<R.prevSec && s>=1 && s<=3) short(); R.prevSec=s;
+      if(R.ready<=0){ R.phase='run'; R.sess=-R.ready; R.prevSec=99; newSet(1); }
+    } else {
+      R.sess+=dt;
+      const n=Math.floor(R.sess/I)+1;
+      if(n>R.set){ if(cfg.target && n>cfg.target){ R.sess=cfg.target*I; finish(); } else newSet(n); }
+      if(R){ const rem=I-(R.sess%I), s=Math.ceil(rem/1000);
+        if(s<R.prevSec && s>=1 && s<=3) short(); R.prevSec=s; }
+    }
+  }
+  render();
+  requestAnimationFrame(tick);
+}
+
+function render(){
+  let html, key;
+  if(view==='setup'){ key='setup'+JSON.stringify(cfg); if(key!==lastKey) html=setupScr(cfg); }
+  else if(view==='hist'){ key='hist'; if(key!==lastKey) html=historyScr(HIST); }
+  else if(view==='summary'){ key='sum'; if(key!==lastKey) html=summaryScr(summary); }
+  else {
+    const I=cfg.interval*1000, total=fmt(Math.max(0,R.sess)/1000), inUndo=R.sess<R.undoUntil && R.tapped[R.set];
+    let o;
+    if(R.phase==='ready'){ const s=Math.ceil(R.ready/1000); o={cls:'ph-ready',label:'Get ready',big:String(Math.max(1,s)),xl:1,frac:R.ready/10000,total,foot:'Set 1 starts soon'}; }
+    else {
+      const inMin=R.sess%I, rem=I-inMin, remS=Math.ceil(rem/1000), frac=rem/I, t=R.tapped[R.set];
+      if(rem<=5000) o={cls:'ph-prep',label:`Set ${R.set+1} in`,big:String(remS),xl:1,frac,total,foot:t?`Set ${R.set}: ${R.durs[R.set-1]} s`:'Get ready'};
+      else if(t) o={cls:'ph-rest',label:'Rest',big:String(R.set),rem:fmtI(remS),frac,total,foot:`Set ${R.set}: ${R.durs[R.set-1]} s · next: set ${R.set+1}`,undo:inUndo};
+      else o={cls:'ph-work',label:'Set',big:String(R.set),rem:fmtI(remS),frac,total,foot:'Tap anywhere when done'};
+    }
+    o.mode=cfg.mode;
+    if(R.paused){ o.cls='ph-paused'; o.foot=`Everything is frozen · ${o.label.toLowerCase()}`; o.label='Paused'; o.undo=false;
+      o.bot='<button class="bigbtn ghost" data-act="end">End</button><button class="bigbtn go" data-act="resume">Resume</button>'; }
+    html=timerScr(o); key=html;
+  }
+  if(html && key!==lastKey){ body.innerHTML=html; lastKey=key; }
+}
+
+function tap(){
+  if(view!=='run'||!R||R.paused||R.phase!=='run') return;
+  const I=cfg.interval*1000, inMin=R.sess%I;
+  if(R.tapped[R.set] || I-inMin<=5000) return;
+  R.tapped[R.set]=true; R.durs[R.set-1]=Math.round(inMin/1000); R.undoUntil=R.sess+3000*1; confirm();
+}
+host.addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]'); audio();
+  if(!a){ tap(); return; }
+  const k=a.dataset.act;
+  if(k==='int-') cfg.interval=Math.max(30,cfg.interval-15);
+  else if(k==='int+') cfg.interval=Math.min(300,cfg.interval+15);
+  else if(k==='tg-') cfg.target=Math.max(0,cfg.target-1);
+  else if(k==='tg+') cfg.target=Math.min(99,cfg.target+1);
+  else if(k==='m-air') cfg.mode='airpods';
+  else if(k==='m-mus') cfg.mode='music';
+  else if(k==='start') start();
+  else if(k==='hist') view='hist';
+  else if(k==='back'||k==='save'||k==='discard'){ view='setup'; }
+  else if(k==='pause' && R){ R.paused=true; tone(520,.12); say('Paused'); }
+  else if(k==='resume' && R){ R.paused=false; tone(780,.12); say('Resuming'); }
+  else if(k==='end' && R){ finish(); }
+  else if(k==='undo' && R){ R.tapped[R.set]=false; R.durs[R.set-1]=null; R.undoUntil=-1; tone(520,.1); }
+  saveCfg(); lastKey='';
+});
+host.addEventListener('keydown',e=>{
+  if(e.code==='Space'){ e.preventDefault(); audio(); tap(); lastKey=''; }
+  if(e.key==='p'&&R){ R.paused=!R.paused; lastKey=''; }
+});
+document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>{
+  speed=+b.dataset.speed; document.querySelectorAll('[data-speed]').forEach(x=>x.setAttribute('aria-pressed',x===b)); }));
+const snd=document.getElementById('snd');
+snd.addEventListener('click',()=>{ soundOn=!soundOn; snd.setAttribute('aria-pressed',soundOn); snd.textContent=soundOn?'Pornit':'Oprit'; });
+
+requestAnimationFrame(t=>{last=t;tick(t);});
+})();
+</script>
