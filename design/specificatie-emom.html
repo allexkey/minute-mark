@@ -398,6 +398,31 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
   </table></div>
 </section>
 
+<section id="stack">
+  <div class="sec-hd"><div class="eyebrow">Cum e construită</div><h2>Stack tehnic</h2></div>
+  <p>Aplicația e scrisă în JavaScript simplu, fără framework. Singura dependință npm este Vite. Codul are aproximativ 27 KB (sub 10 KB comprimat), așa că pornește instant și rămâne ușor de împachetat mai târziu cu Capacitor pentru App Store.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Zonă</th><th>Rol</th><th>Tehnologie</th></tr></thead>
+    <tbody>
+      <tr><td>Aplicație</td><td>Limbaj</td><td>JavaScript (ES modules), HTML, CSS; fără framework</td></tr>
+      <tr><td>Aplicație</td><td>Interfață</td><td>DOM direct, cu template strings; variabile CSS; layout separat pentru portrait și landscape</td></tr>
+      <tr><td>Aplicație</td><td>Fonturi</td><td>Big Shoulders Display și Barlow (OFL), găzduite local pentru offline</td></tr>
+      <tr><td>Aplicație</td><td>Sunet</td><td>Web Audio API: beep-uri programate dinainte pe ceasul audio</td></tr>
+      <tr><td>Aplicație</td><td>Voce</td><td>Web Speech API (<code>speechSynthesis</code>), en-US</td></tr>
+      <tr><td>Aplicație</td><td>AirPods</td><td>Media Session API, plus <code>&lt;audio&gt;</code> silențios în buclă; Audio Session API (<code>playback</code> / <code>ambient</code>)</td></tr>
+      <tr><td>Aplicație</td><td>Ecran aprins</td><td>Screen Wake Lock API</td></tr>
+      <tr><td>Aplicație</td><td>Stocare</td><td>localStorage pentru setări și sesiunea în curs; IndexedDB pentru istoric</td></tr>
+      <tr><td>Aplicație</td><td>Offline și instalare</td><td>Service worker scris de mână (cache-first); Web App Manifest</td></tr>
+      <tr><td>Dezvoltare</td><td>Build</td><td>Vite 8, cu un plugin propriu care generează service worker-ul</td></tr>
+      <tr><td>Dezvoltare</td><td>Teste</td><td><code>node:test</code> (integrat în Node 24), pentru motorul de timp</td></tr>
+      <tr><td>Dezvoltare</td><td>Capturi de ecran</td><td>Script propriu care controlează Chromium prin Chrome DevTools Protocol</td></tr>
+      <tr><td>Dezvoltare</td><td>Iconițe</td><td>Script Python fără dependințe</td></tr>
+      <tr><td>Publicare</td><td>Cod și CI/CD</td><td>GitHub (<code>allexkey/minute-mark</code>); GitHub Actions: teste, build și deploy la fiecare push pe <code>main</code></td></tr>
+      <tr><td>Publicare</td><td>Hosting</td><td>GitHub Pages, prin HTTPS (necesar pentru Wake Lock și Media Session)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
 <section id="stari">
   <div class="sec-hd"><div class="eyebrow">Pentru dezvoltare</div><h2>Harta stărilor</h2></div>
 <pre class="mermaid">

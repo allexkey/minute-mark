@@ -20,6 +20,45 @@ npm run preview   # serve dist/ on http://127.0.0.1:4173
 
 To try the app on an iPhone, serve `dist/` over HTTPS. Wake Lock and Media Session need a secure context. Install it with Share → Add to Home Screen.
 
+## Tech stack
+
+The app is plain JavaScript with no framework. Its only npm dependency is Vite.
+
+**App (runs on the phone)**
+
+| Layer | Technology |
+|---|---|
+| Language | JavaScript (ES modules), HTML, CSS; no framework |
+| UI | Direct DOM with template strings; CSS custom properties and viewport units; separate portrait and landscape layouts |
+| Fonts | Big Shoulders Display and Barlow (OFL), self-hosted in `public/fonts/` for offline use |
+| Sound | Web Audio API: oscillator beeps scheduled ahead on the AudioContext clock |
+| Voice | Web Speech API (`speechSynthesis`), en-US |
+| AirPods | Media Session API with a silent looping `<audio>` so the app stays Now Playing; Audio Session API (`playback` / `ambient`) |
+| Screen on | Screen Wake Lock API |
+| Storage | localStorage for settings and the live session; IndexedDB for history |
+| Offline | Hand-written service worker, cache-first |
+| Install | Web App Manifest (PWA, Add to Home Screen) |
+
+**Development**
+
+| Role | Technology |
+|---|---|
+| Build and dev server | Vite 8; a small custom plugin in `vite.config.js` generates the service worker |
+| Tests | `node:test` (built into Node 24); engine unit tests, no Jest or Vitest |
+| Screenshots | `tools/shots.mjs` drives Chromium over the Chrome DevTools Protocol; no Playwright or Puppeteer |
+| Icons | `tools/make-icons.py`, dependency-free Python that writes the PNGs |
+| Runtime | Node 24 |
+
+**Delivery**
+
+| Role | Technology |
+|---|---|
+| Source | Git on GitHub (`allexkey/minute-mark`) |
+| CI/CD | GitHub Actions: test, build and deploy on every push to `main` |
+| Hosting | GitHub Pages over HTTPS (needed for Wake Lock and Media Session) |
+
+The build is about 27 KB of JavaScript (under 10 KB gzipped). Later it can be wrapped with Capacitor for the App Store, keeping the same web code and adding native haptics and a Live Activity.
+
 ## Structure
 
 | Path | What it does |
