@@ -16,7 +16,15 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
-  const key = req.mode === 'navigate' ? new URL('./', self.registration.scope).href : req;
-  event.respondWith(caches.match(key).then((hit) => hit || fetch(req)));
+  const url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== self.location.origin) return;
+  const shell = new URL('./', self.registration.scope);
+  if (req.mode === 'navigate') {
+    // Only the app's own page gets the cached shell; other pages in scope (e.g. /spike/) go to the network.
+    const isApp = url.pathname === shell.pathname || url.pathname === `${shell.pathname}index.html`;
+    if (!isApp) return;
+    event.respondWith(caches.match(shell.href).then((hit) => hit || fetch(req)));
+    return;
+  }
+  event.respondWith(caches.match(req).then((hit) => hit || fetch(req)));
 });

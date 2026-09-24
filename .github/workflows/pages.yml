@@ -26,6 +26,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - name: Publish the iOS test page next to the app
+        run: cp -r spike dist/spike
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
