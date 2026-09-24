@@ -6,10 +6,13 @@ import { esc, fmtDate, confirmTap } from '../ui.js';
  * opts: { isNew, targetReached }
  */
 export function mountSummary(root, app, rec, opts = {}) {
+  const restType = rec.type === 'rest';
+  // EMOM bars are relative to the interval; rest-timer sets have no limit, so use the longest set
+  const scale = restType ? Math.max(1, ...rec.durations.filter((d) => d != null)) : rec.interval;
   const bars = rec.durations.map((d) => {
     if (d == null) return '<div class="bar miss" title="Not marked"></div>';
     const slow = rec.slowest != null && d === rec.slowest ? ' slow' : '';
-    return `<div class="bar${slow}" style="height:${Math.max(3, Math.min(100, (d / rec.interval) * 100)).toFixed(1)}%" title="${d} s"></div>`;
+    return `<div class="bar${slow}" style="height:${Math.max(3, Math.min(100, (d / scale) * 100)).toFixed(1)}%" title="${d} s"></div>`;
   }).join('');
   const title = opts.targetReached ? 'Target reached' : opts.isNew ? 'Done' : 'Session';
 
@@ -26,7 +29,7 @@ export function mountSummary(root, app, rec, opts = {}) {
       <div class="stat"><b>${rec.avg != null ? `${rec.avg}s` : '—'}</b><span>Avg set</span></div>
     </div>
     ${rec.sets ? `<div class="chart" role="img" aria-label="Time per set">${bars}</div>
-    <div class="chart-cap"><span>Set 1</span><span>set time / ${fmtInterval(rec.interval)}</span><span>${rec.sets}</span></div>` : ''}
+    <div class="chart-cap"><span>Set 1</span><span>${restType ? `set time · rest ${fmtInterval(rec.rest)}` : `set time / ${fmtInterval(rec.interval)}`}</span><span>${rec.sets}</span></div>` : ''}
     <div class="fields">
       <div>
         <label class="flab" for="exercise">Exercise</label>

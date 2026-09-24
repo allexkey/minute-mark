@@ -207,7 +207,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
 <div class="wrap">
 
 <header class="hero">
-  <div class="eyebrow">Specificație de design · v0.3 · 23 septembrie 2026 · aprobată, testată pe iOS 26.6.1</div>
+  <div class="eyebrow">Specificație de design · v0.4 · 24 septembrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer</div>
   <h1><span class="w">Work.</span> <span class="r">Rest.</span> <span class="p">Next&nbsp;set.</span></h1>
   <p class="lead">Un cronometru EMOM pentru sală, sub formă de PWA, gândit pentru iPhone. Interfața și vocea sunt în engleză. La fiecare minut: un beep, vocea care anunță setul („Set 9”), iar pe ecran numărul setului și timpul total al sesiunii. Tot ecranul își schimbă culoarea, ca să-l poți citi de pe podea. Marchezi sfârșitul setului cu o atingere pe ecran sau cu o apăsare pe AirPods.</p>
 </header>
@@ -215,7 +215,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
 <section id="decizii">
   <div class="sec-hd"><div class="eyebrow">Ce am stabilit</div><h2>Decizii luate</h2></div>
   <dl class="decisions">
-    <div class="dec"><dt>Format</dt><dd>EMOM deschis<small>Merge până apeși Stop. Ținta de seturi e opțională.</small></dd></div>
+    <div class="dec"><dt>Format</dt><dd>EMOM sau Rest timer<small>Se alege pe ecranul de start. Ambele merg până la End; ținta de seturi e opțională.</small></dd></div>
     <div class="dec"><dt>Interval</dt><dd>Implicit 1:00<small>Configurabil între 0:30 și 5:00, cu pas de 15 s</small></dd></div>
     <div class="dec"><dt>Start</dt><dd>10 s de pregătire<small>„Get ready”, apoi 3-2-1</small></dd></div>
     <div class="dec"><dt>Semnal la minut</dt><dd>Beep + voce<small>3 beep-uri scurte, apoi beep lung și „Set 9”</small></dd></div>
@@ -229,6 +229,23 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
     <div class="dec"><dt>Platformă</dt><dd>iPhone, PWA instalată<small>Adăugată pe ecranul principal. App Store mai târziu, prin Capacitor.</small></dd></div>
     <div class="dec"><dt>Nume</dt><dd>Minute Mark<small>Numele de sub iconiță</small></dd></div>
   </dl>
+</section>
+
+<section id="rest-timer">
+  <div class="sec-hd"><div class="eyebrow">Adăugat în v0.4</div><h2>Modul Rest timer</h2></div>
+  <p>Al doilea tip de timer. Setul durează cât îți ia ție, iar pauza are o durată fixă, aleasă la început. Când pauza se termină, setul următor pornește singur. Culorile, sunetele și vocea sunt aceleași ca la EMOM.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Moment</th><th>Ecran</th><th>Sunet / voce</th></tr></thead>
+    <tbody>
+      <tr><td>Start</td><td><span class="sw" style="background:var(--ready)"></span>GET READY, 10 → 1</td><td>“Get ready”, 3-2-1</td></tr>
+      <tr><td>Setul (fără limită)</td><td><span class="sw" style="background:var(--work)"></span>SET, numărul setului mare, dedesubt durata setului care crește (0:34); inelul se umple o dată pe minut</td><td>Beep lung, “Set N”</td></tr>
+      <tr><td>Tap / AirPods simplu</td><td><span class="sw" style="background:var(--rest)"></span>REST, numărătoare inversă mare (1:00); butoanele <b>−15s · SKIP · +15s</b>; UNDO timp de 3 s</td><td>Confirmare, “Rest”</td></tr>
+      <tr><td>Ultimele 5 s ale pauzei</td><td><span class="sw" style="background:var(--prep)"></span>SET N IN, 5 → 1</td><td>3 beep-uri, apoi beep lung, “Set N”</td></tr>
+      <tr><td>AirPods în pauză</td><td>—</td><td>Apăsarea simplă e ignorată (nu sari peste pauză din greșeală); apăsarea dublă = UNDO</td></tr>
+      <tr><td>Ținta atinsă</td><td>Rezumat cu KEEP GOING, imediat după marcarea ultimului set, fără pauză după el</td><td>Acord final, “Target reached”</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Pauza se setează între 0:15 și 5:00, cu pas de 15 s, implicit 1:00. Butoanele ±15s și Skip schimbă doar pauza curentă, nu setarea. În rezumat, barele sunt scalate după cel mai lung set, iar în istoric apare „rest 1:00” în loc de „EMOM 1:00”. Dacă termini sesiunea în mijlocul unui set, setul acela nu se numără.</p>
 </section>
 
 <section id="prototip">

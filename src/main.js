@@ -68,6 +68,10 @@ const app = {
     const s = this.session;
     if (!s || !E.markDone(s, Date.now())) return;
     this.markedWallAt = Date.now();
+    if (s.type === 'rest') {
+      audio.cancelAll(); // the next set's cues depend on this mark
+      if (E.view(s, Date.now()).phase === 'target') { finish({ targetReached: true }); return; }
+    }
     audio.confirm();
     if (this.cfg.sayRest) audio.say('Rest');
     persist(true);
@@ -78,7 +82,26 @@ const app = {
     const s = this.session;
     if (!s || !E.undoMark(s, Date.now())) return;
     this.markedWallAt = 0;
+    if (s.type === 'rest') audio.cancelAll();
     audio.undo();
+    persist(true);
+    tick();
+  },
+
+  /** Rest timer: ±15 s on the current rest. */
+  adjustRest(deltaMs) {
+    const s = this.session;
+    if (!s || !E.adjustRest(s, Date.now(), deltaMs)) return;
+    audio.cancelAll();
+    audio.now((t) => audio.tone(deltaMs > 0 ? 880 : 660, 0.07, t));
+    persist(true);
+    tick();
+  },
+
+  skipRest() {
+    const s = this.session;
+    if (!s || !E.skipRest(s, Date.now())) return;
+    audio.cancelAll();
     persist(true);
     tick();
   },
@@ -222,10 +245,11 @@ function finish({ targetReached }) {
   audio.cancelAll();
   const sum = E.summary(s, now);
   const rec = {
-    startedAt: s.startedAt, mode: s.mode, interval: sum.interval, sets: sum.sets, totalMs: sum.totalMs,
+    startedAt: s.startedAt, type: s.type, mode: s.mode, interval: sum.interval, rest: sum.rest, sets: sum.sets, totalMs: sum.totalMs,
     durations: sum.durations, avg: sum.avg, slowest: sum.slowest, exercise: '', note: '',
   };
   if (targetReached) {
+    if (s.type === 'rest') audio.final(); // EMOM already scheduled its target chord as a cue
     audio.say(`Target reached. ${sum.sets} sets.`);
   } else {
     audio.final();

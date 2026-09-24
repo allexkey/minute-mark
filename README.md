@@ -1,5 +1,7 @@
 # Minute Mark
 
+A gym timer PWA for iPhone with two timers: **EMOM** (a new set every interval) and **Rest timer** (you work at your own pace; tapping starts a fixed rest countdown, then the next set starts automatically). The paragraph below describes EMOM.
+
 An EMOM gym timer, built as a PWA for iPhone. Every minute it beeps and announces the set. The screen shows the set number and the total session time, and the whole screen changes colour by phase: green = work, blue = rest, orange = the last 5 s. You mark the end of a set with a tap, or with an AirPods press.
 
 - Design spec: `design/specificatie-emom.html` (in Romanian)
@@ -37,5 +39,6 @@ To try the app on an iPhone, serve `dist/` over HTTPS. Wake Lock and Media Sessi
 |---|---|
 | Set done | Tap anywhere · AirPods single press |
 | Undo | "Undo" button (3 s) · AirPods double press |
+| Rest timer: change the current rest | −15s / +15s, Skip (AirPods presses during rest are ignored, except double = undo) |
 | Pause | ⏸ button |
 | End | Only from the pause screen |

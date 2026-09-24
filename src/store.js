@@ -4,7 +4,9 @@ const CFG_KEY = 'mm.cfg';
 const SESSION_KEY = 'mm.session';
 
 export const DEFAULT_CFG = {
-  interval: 60, // seconds, 30..300 in 15 s steps
+  type: 'emom', // 'emom' | 'rest'
+  interval: 60, // EMOM: seconds, 30..300 in 15 s steps
+  rest: 60, // rest timer: seconds, 15..300 in 15 s steps
   target: 0, // 0 = no target
   mode: 'airpods', // 'airpods' | 'music'
   announceMinutes: true,
@@ -68,9 +70,10 @@ export function persistStorage() {
 
 export function toCSV(list) {
   const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const head = ['date', 'exercise', 'sets', 'total_seconds', 'interval_seconds', 'avg_set_seconds', 'set_durations', 'note'];
+  const head = ['date', 'timer', 'exercise', 'sets', 'total_seconds', 'interval_seconds', 'rest_seconds', 'avg_set_seconds', 'set_durations', 'note'];
   const rows = list.map((r) => [
-    new Date(r.startedAt).toISOString(), r.exercise, r.sets, Math.round(r.totalMs / 1000), r.interval,
+    new Date(r.startedAt).toISOString(), r.type ?? 'emom', r.exercise, r.sets, Math.round(r.totalMs / 1000),
+    (r.type ?? 'emom') === 'emom' ? r.interval : '', r.type === 'rest' ? r.rest : '',
     r.avg ?? '', r.durations.map((d) => d ?? '').join(' '), r.note,
   ].map(esc).join(','));
   return [head.join(','), ...rows].join('\n');

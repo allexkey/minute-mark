@@ -27,7 +27,7 @@ export async function mountHistory(root, app) {
     $('#list').innerHTML = rows.length
       ? rows.map((r) => `<li><button class="hrow" data-id="${r.id}">
           <span class="h1"><span>${esc(fmtDate(r.startedAt))}</span><b>${r.sets} ${r.sets === 1 ? 'set' : 'sets'}</b></span>
-          <span class="h2">${fmtClock(r.totalMs)} · interval ${fmtInterval(r.interval)} · avg ${r.avg != null ? `${r.avg}s` : '—'}</span>
+          <span class="h2">${fmtClock(r.totalMs)} · ${r.type === 'rest' ? `rest ${fmtInterval(r.rest)}` : `EMOM ${fmtInterval(r.interval)}`} · avg ${r.avg != null ? `${r.avg}s` : '—'}</span>
           ${r.exercise || r.note ? `<span class="h3">${esc([r.exercise, r.note].filter(Boolean).join(' · '))}</span>` : ''}
         </button></li>`).join('')
       : '<li class="empty">No sessions yet. Saved sessions show up here.</li>';

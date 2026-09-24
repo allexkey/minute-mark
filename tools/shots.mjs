@@ -123,6 +123,31 @@ await js(`document.querySelector('.run').dispatchEvent(new PointerEvent('pointer
 await at(4 * 60_000 + 40_000);
 await shot('13-landscape-rest');
 
+// ---- rest timer ----
+await js(`document.querySelector('#pause').click(); true`);
+await sleep(300);
+await js(`document.querySelector('#end').click(); true`);
+await sleep(400);
+await js(`document.querySelector('#discard').click(); document.querySelector('#discard').click(); true`);
+await size(390, 844);
+await sleep(300);
+await js(`document.querySelector('[data-type=rest]').click(); true`);
+await shot('16-setup-rest');
+await js(`document.querySelector('#start').click()`);
+await sleep(800);
+await at(34_000);
+await shot('17-rest-work');
+await js(`document.querySelector('.run').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))`);
+await shot('18-rest-rest-undo');
+await js(`document.querySelector('[data-adjust="1"]').click()`);
+await at(34_000 + 20_000);
+await shot('19-rest-rest');
+console.log('rest after +15s, at 20 s in:', await js(`(() => { const { app, E } = window.__mm; const v = E.view(app.session, Date.now()); return v.phase + ' ' + Math.round(v.remainingMs / 1000) + 's'; })()`));
+await js(`document.querySelector('#skip').click()`);
+await sleep(300);
+console.log('after skip:', await js(`(() => { const { app, E } = window.__mm; const v = E.view(app.session, Date.now()); return v.phase + ' set ' + v.set; })()`));
+await shot('20-rest-set2');
+
 console.log(problems.length ? 'PROBLEMS:\n' + problems.join('\n') : 'no console errors');
 ws.close();
 proc.kill();
