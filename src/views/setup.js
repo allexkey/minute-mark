@@ -2,19 +2,19 @@ import { fmtInterval } from '../engine.js';
 import { icons } from '../ui.js';
 
 const TYPE_HINT = {
-  emom: 'Every minute on the minute: a new set starts every interval.',
-  rest: 'Work at your own pace. When you finish a set, the rest countdown starts, then the next set.',
+  emom: 'A new set starts every interval.',
+  rest: 'Tap when a set is done; the rest counts down, then the next set starts.',
 };
 const MODE_HINT = {
-  airpods: 'Other music will stop. Press your AirPods once to finish a set, twice to undo.',
-  music: 'Cues play over your music. Tap the screen to finish a set.',
+  airpods: 'Other music stops. AirPods: press once = set done, twice = undo.',
+  music: 'Cues play over your music. Tap the screen when a set is done.',
 };
 const LIMITS = { interval: [30, 300], rest: [15, 300] };
 
 export function mountSetup(root, app) {
   const cfg = app.cfg;
   root.innerHTML = `
-  <main class="screen">
+  <main class="screen setup">
     <header class="hd">
       <h1 class="brand">Minute Mark<i>.</i></h1>
       <div class="hd-links">
@@ -43,10 +43,9 @@ export function mountSetup(root, app) {
         <p class="flab" id="l-tg">Target sets</p>
         <div class="stepper sm" role="group" aria-labelledby="l-tg">
           <button id="tg-down" aria-label="Fewer sets">−</button>
-          <output id="tg" aria-live="polite"></output>
+          <output id="tg" aria-live="polite" aria-label="Target sets, infinity means no target"></output>
           <button id="tg-up" aria-label="More sets">+</button>
         </div>
-        <p class="hint" id="tg-hint"></p>
       </div>
       <div>
         <p class="flab" id="l-mode">Audio</p>
@@ -57,7 +56,7 @@ export function mountSetup(root, app) {
         <p class="hint" id="mode-hint"></p>
       </div>
     </div>
-    <button class="bigbtn go start" id="start">Start</button>
+    <footer class="startbar"><button class="bigbtn go start" id="start">Start</button></footer>
   </main>`;
 
   const $ = (s) => root.querySelector(s);
@@ -71,7 +70,6 @@ export function mountSetup(root, app) {
     $('#dur-down').disabled = cfg[k] <= min;
     $('#dur-up').disabled = cfg[k] >= max;
     $('#tg').textContent = cfg.target || '∞';
-    $('#tg-hint').textContent = cfg.target ? `Stops after ${cfg.target} sets` : 'No target: runs until you end it';
     $('#tg-down').disabled = cfg.target <= 0;
     root.querySelectorAll('[data-type]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === cfg.type)));
     root.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === cfg.mode)));

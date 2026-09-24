@@ -71,6 +71,7 @@ The build is about 27 KB of JavaScript (under 10 KB gzipped). Later it can be wr
 | `src/sw-template.js` | Service worker; `vite.config.js` fills in the precache list |
 | `tools/make-icons.py` | Generates the PNG icons (no dependencies) |
 | `tools/shots.mjs` | Screenshot tour through the Chrome DevTools Protocol (no dependencies) |
+| `tools/fit-check.mjs` | Checks every screen fits on one page on iPhone sizes, including Display Zoom and safe areas |
 
 ## Controls
 

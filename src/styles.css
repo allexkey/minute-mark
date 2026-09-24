@@ -37,7 +37,7 @@ button, a { touch-action: manipulation; }
   background: var(--app); color: var(--app-ink); overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 .hd { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; }
-.brand { font: 900 34px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; margin: 0; }
+.brand { font: 900 clamp(26px, 8.4vw, 34px)/1 var(--display); letter-spacing: .04em; text-transform: uppercase; margin: 0; white-space: nowrap; }
 .brand i { font-style: normal; color: var(--work); }
 .hd-links { display: flex; gap: 4px; }
 .link { background: none; border: 0; color: var(--work); font-weight: 600; font-size: 17px; padding: 12px 10px; cursor: pointer; }
@@ -63,6 +63,21 @@ button, a { touch-action: manipulation; }
 .bigbtn.ghost { background: transparent; border: 2px solid currentColor; }
 .bigbtn.warn { background: transparent; border: 2px solid var(--danger); color: var(--danger); }
 .start { width: 100%; height: 76px; font-size: 36px; }
+
+/* setup: one page on any phone — sizes follow the screen height, START is pinned below the fields */
+.screen.setup { overflow: hidden; padding-top: calc(var(--sat) + 8px); }
+.setup .hd { min-height: 44px; }
+.setup .link { padding: 10px 6px; }
+.setup .fields { flex: 1; min-height: 0; overflow-y: auto; gap: clamp(10px, 2.2dvh, 22px); padding-block: clamp(6px, 1.4dvh, 16px); }
+.setup .flab { margin-bottom: clamp(5px, .9dvh, 8px); }
+.setup .hint { margin-top: clamp(5px, .8dvh, 8px); }
+.setup .stepper { padding: clamp(5px, .8dvh, 8px); }
+.setup .stepper button { width: clamp(44px, 6dvh, 56px); height: clamp(44px, 6dvh, 56px); }
+.setup .stepper output { font-size: clamp(38px, 6dvh, 56px); }
+.setup .stepper.sm output { font-size: clamp(32px, 4.8dvh, 44px); }
+.setup .seg button { padding-block: clamp(10px, 1.5dvh, 14px); }
+.setup .startbar { padding-top: clamp(8px, 1.5dvh, 16px); }
+.setup .start { height: clamp(60px, 8dvh, 76px); font-size: clamp(28px, 4dvh, 36px); }
 .actions { display: flex; gap: 12px; padding-top: 16px; }
 .actions .bigbtn { flex: 1; }
 .actions { flex-wrap: wrap; }
