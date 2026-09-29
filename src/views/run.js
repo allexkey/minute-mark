@@ -75,10 +75,11 @@ export function stages(s, now) {
   return out;
 }
 
+/** Bottom timer: label + value, styled like "Total" at the top. */
 function toGo(s, now) {
   const r = remainingToEnd(s, now);
-  if (r.open) return r.ms > 0 ? `sets + ${fmtClock(r.ms)} to go` : 'open session';
-  return `${r.approx ? '~' : ''}${fmtClock(r.ms)} to go`;
+  if (r.open) return r.ms > 0 ? ['After sets', `+${fmtClock(r.ms)}`] : ['Open session', ''];
+  return ['To go', `${r.approx ? '~' : ''}${fmtClock(r.ms)}`];
 }
 
 const clockFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -96,8 +97,8 @@ export function mountRun(root, app) {
     <p class="lbl" id="label"></p>
     <div class="dial">${ring()}<div class="dial-in"><div class="setn" id="big"></div><div class="rem" id="rem"></div></div></div>
     <p class="foot" id="foot"></p>
-    <button class="undo" id="undo" hidden>Undo</button>
     <footer class="run-bot">
+      <button class="undo" id="undo" hidden>Undo</button>
       <div class="restctl" id="restctl" hidden>
         <button class="restbtn" data-adjust="-1" aria-label="${REST_STEP_MS / 1000} seconds less rest">−${REST_STEP_MS / 1000}s</button>
         <button class="restbtn skip" id="skip">Skip</button>
@@ -156,7 +157,8 @@ export function mountRun(root, app) {
       put('cls', el.big, 'className', `setn ${d.cls}${d.cls === 'time' && d.big.length >= 5 ? ' long' : ''}`.trim());
       put('rem', el.rem, 'textContent', d.rem);
       put('foot', el.foot, 'textContent', v.paused ? pausedFoot(v) : d.foot);
-      put('togo', el.togo, 'textContent', toGo(s, now));
+      const [goLabel, goValue] = toGo(s, now);
+      put('togo', el.togo, 'innerHTML', `${goLabel}${goValue ? `<b>${goValue}</b>` : ''}`);
       put('ring', el.ring.style, 'strokeDashoffset', (100 - clamp01(v.frac) * 100).toFixed(2));
       const showUndo = !v.paused && v.markedAt != null && v.phase === 'rest' && now - markedWallAt < UNDO_WINDOW_MS;
       put('undo', el.undo, 'hidden', !showUndo);

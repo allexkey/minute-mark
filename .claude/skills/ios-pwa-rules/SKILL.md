@@ -25,7 +25,10 @@ Note: the user agent says `iPhone OS 18_7` — that value is frozen by Apple. Re
 | Screen Wake Lock | Works in Safari and in the installed app; re-request it on `visibilitychange` → visible |
 | Vibration | Not available on iOS PWA |
 
-**Not yet tested:** mode B with the screen locked. Until it is verified, keep the screen on in mode B (wake lock) and do not promise locked-screen cues in that mode.
+| Mode B (`ambient`) with the screen **locked** (tested 30 Sep 2026, YouTube playing) | **No beeps, no voice** — ambient audio is silenced by the lock, like the native Ambient category |
+| Lock screen in mode B | Shows the music app only; the app cannot appear there while another app owns Now Playing |
+
+**Consequence:** in mode B the cues only work while the screen is on, so rely on the wake lock and tell the user not to press the lock button. Other `audioSession` types (`transient`, `transient-solo`, `auto`, with or without the silent loop) are being tested with `spike/` mode C.
 
 ## Rules
 
