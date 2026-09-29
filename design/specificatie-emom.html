@@ -73,7 +73,38 @@ a{color:var(--accent)}
 .ph-rest{background:var(--rest);color:var(--rest-ink)}
 .ph-prep{background:var(--prep);color:var(--prep-ink)}
 .ph-paused{background:var(--paused);color:#E8ECE9}
-.top{display:flex;justify-content:space-between;align-items:center;padding:17cqw 7cqw 0;font:500 4.2cqw/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.top{display:grid;grid-template-columns:1fr auto;align-items:center;row-gap:3cqw;padding:15cqw 7cqw 0;font:500 3.6cqw/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.top .clk{display:inline-flex;align-items:center;gap:2cqw}
+.top .clk b{margin-left:0}
+.mico{display:inline-grid;place-items:center;width:7.4cqw;height:7.4cqw;border:.5cqw solid currentColor;border-radius:50%;opacity:.8}
+.mico svg{width:3.8cqw;height:3.8cqw}
+.strip{grid-column:1/-1;display:flex;gap:1.1cqw;height:2cqw}
+.strip i{position:relative;flex-basis:0;min-width:2cqw;border-radius:99px;overflow:hidden;background:color-mix(in srgb,currentColor 22%,transparent)}
+.strip i b{position:absolute;inset:0 auto 0 0;background:currentColor;border-radius:99px;margin:0}
+.strip i.open{background:repeating-linear-gradient(-45deg,color-mix(in srgb,currentColor 30%,transparent) 0 1cqw,color-mix(in srgb,currentColor 12%,transparent) 1cqw 2cqw)}
+.togo{font:500 3.4cqw/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.ph-warm{background:#FF5E62;color:#1C0305}
+.ph-stretch{background:#7B61FF;color:#fff}
+.stagebtn{flex:0 1 62cqw;height:13cqw;border-radius:99px;border:.6cqw solid currentColor;background:transparent;color:inherit;font:800 5.4cqw/1 var(--display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.botrow.three{gap:2cqw}
+.botrow.three .bigbtn{font-size:5cqw;padding:0 1cqw;flex:1}
+.botrow .stretchbtn{background:#7B61FF;color:#fff}
+.setn.time.long{font-size:24cqw}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:2.6cqw}
+.stepper.half{padding:1.4cqw}
+.stepper.half button{width:10cqw;height:10cqw;font-size:6cqw}
+.stepper.half span{font-size:9.5cqw}
+.seg.seg3{grid-template-columns:repeat(3,1fr)}
+.seg.seg3 button{font-size:3.8cqw;padding:2.6cqw .5cqw}
+.dotw,.dots{display:inline-block;width:2cqw;height:2cqw;border-radius:50%;margin-right:1.6cqw;vertical-align:.2cqw}
+.dotw{background:#FF5E62}.dots{background:#7B61FF}
+.plan{display:grid;gap:1.3cqw;padding-bottom:3cqw}
+.plan .pb{display:flex;gap:.8cqw;height:1.6cqw}
+.plan .pb i{flex-basis:0;min-width:1.6cqw;border-radius:99px;background:var(--work)}
+.plan .pb i.w{background:#FF5E62}.plan .pb i.p{background:var(--prep)}.plan .pb i.s{background:#7B61FF}
+.plan .pb i.o{background:repeating-linear-gradient(-45deg,var(--work) 0 1cqw,color-mix(in srgb,var(--work) 35%,transparent) 1cqw 2cqw)}
+.plan p{margin:0;font-size:3.4cqw;line-height:1.3;color:#98A39B}
+.plan p.when{font:500 3.1cqw/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#F1F4F2}
 .top b{font-family:var(--display);font-weight:800;font-size:7.4cqw;letter-spacing:.02em;margin-left:1.5cqw;font-variant-numeric:tabular-nums}
 .chip{display:inline-flex;align-items:center;gap:1.4cqw;border:.5cqw solid currentColor;border-radius:99px;padding:1.2cqw 2.6cqw;font-size:3.4cqw;opacity:.85}
 .chip svg{width:3.8cqw;height:3.8cqw}
@@ -110,7 +141,7 @@ a{color:var(--accent)}
 .brand{font:900 11cqw/1 var(--display);letter-spacing:.04em}
 .brand i{font-style:normal;color:var(--work)}
 .lnk{font:600 4.4cqw/1 var(--body);color:var(--work);cursor:pointer;background:none;border:0;padding:0}
-.fields{flex:1;display:flex;flex-direction:column;gap:5.5cqw;padding:3cqw 7cqw}
+.fields{flex:1;display:flex;flex-direction:column;gap:4.2cqw;padding:2cqw 7cqw}
 .flab{font:500 3.6cqw/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#98A39B;margin-bottom:2cqw}
 .stepper{display:flex;align-items:center;justify-content:space-between;background:#1A1F1C;border-radius:5cqw;padding:2cqw}
 .stepper button{width:13cqw;height:13cqw;border-radius:4cqw;border:0;background:#262D29;color:#fff;font:600 7cqw/1 var(--body);cursor:pointer}
@@ -215,7 +246,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
 <div class="wrap">
 
 <header class="hero">
-  <div class="eyebrow">Specificație de design · v0.4 · 24 septembrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer</div>
+  <div class="eyebrow">Specificație de design · v0.5 · 29 septembrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer, încălzire și stretching</div>
   <h1><span class="w">Work.</span> <span class="r">Rest.</span> <span class="p">Next&nbsp;set.</span></h1>
   <p class="lead">Un cronometru EMOM pentru sală, sub formă de PWA, gândit pentru iPhone. Interfața și vocea sunt în engleză. La fiecare minut: un beep, vocea care anunță setul („Set 9”), iar pe ecran numărul setului și timpul total al sesiunii. Tot ecranul își schimbă culoarea, ca să-l poți citi de pe podea. Marchezi sfârșitul setului cu o atingere pe ecran sau cu o apăsare pe AirPods.</p>
 </header>
@@ -256,6 +287,25 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
   <p class="muted">Pauza se setează între 0:15 și 5:00, cu pas de 15 s, implicit 1:00. Butoanele ±15s și Skip schimbă doar pauza curentă, nu setarea. În rezumat, barele sunt scalate după cel mai lung set, iar în istoric apare „rest 1:00” în loc de „EMOM 1:00”. Dacă termini sesiunea în mijlocul unui set, setul acela nu se numără.</p>
 </section>
 
+<section id="etape">
+  <div class="sec-hd"><div class="eyebrow">Adăugat în v0.5</div><h2>Încălzire și stretching</h2></div>
+  <p>O sesiune poate avea încălzire înainte de seturi și stretching după ele. Fiecare se alege pe ecranul de start: <b>Off / 5′ / 10′</b>. Înaintea fiecărei treceri e un minut de pregătire pe portocaliu. Când se termină seturile, sună <b>10 beep-uri scurte</b>.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Etapă</th><th>Ecran</th><th>Sunet / voce</th><th>Cum se trece mai departe</th></tr></thead>
+    <tbody>
+      <tr><td>Încălzire</td><td><span class="sw" style="background:#FF5E62"></span>WARM-UP, numărătoare inversă (4:12)</td><td>“Warm-up. 5 minutes.”, apoi liniște; 3-2-1 la final</td><td>Automat sau <b>SKIP WARM-UP</b></td></tr>
+      <tr><td>Pregătire seturi</td><td><span class="sw" style="background:var(--prep)"></span>SETS START IN 1:00, ultimele 10 s cu cifre mari</td><td>“Get ready. Sets start in one minute.”, 3-2-1, beep lung, “Set 1”</td><td>Automat sau SKIP</td></tr>
+      <tr><td>Seturi</td><td>EMOM sau Rest timer, ca până acum</td><td>—</td><td>Ținta atinsă, sau <b>Pauză → STRETCH</b></td></tr>
+      <tr><td>Final seturi</td><td>—</td><td><b>10 beep-uri scurte</b>, “Stretching in one minute.”</td><td>—</td></tr>
+      <tr><td>Pregătire stretching</td><td><span class="sw" style="background:var(--prep)"></span>STRETCH IN 1:00</td><td>3-2-1, beep lung, “Stretch. 10 minutes.”</td><td>Automat sau SKIP</td></tr>
+      <tr><td>Stretching</td><td><span class="sw" style="background:#7B61FF"></span>STRETCH, numărătoare inversă</td><td>Liniște; la final acordul și “Session complete.”</td><td>Automat → rezumat, sau <b>SKIP STRETCH</b></td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Trei timere mici pe fiecare ecran de lucru.</b> Sus: <b>Total</b>, timpul de la Start, și <b>ora curentă</b>. Jos: <b>cât mai e până la final</b>. Acesta e exact când durata se poate calcula (EMOM cu țintă, încălzire, stretching), estimat cu „~” pentru Rest timer cu țintă, pe baza ritmului tău, și „sets + 11:00” fără țintă.</p>
+  <p><b>Banda sesiunii.</b> Sub timerele de sus apare o bandă cu segmentele încălzire · pregătire · seturi · pregătire · stretching. Fiecare segment se umple pe măsură ce avansezi. Fără țintă, segmentul seturilor e hașurat, pentru că durata lui nu se cunoaște. Pe ecranul de start, aceeași bandă apare colorată, cu planul sesiunii, durata totală și ora estimată de final.</p>
+  <p class="muted">Rezumatul arată și durata totală a sesiunii, plus cât ai făcut efectiv încălzire și stretching (partea sărită cu Skip nu se numără). Exportul CSV are coloanele <code>warmup_seconds</code>, <code>stretch_seconds</code> și <code>session_seconds</code>.</p>
+</section>
+
 <section id="prototip">
   <div class="sec-hd"><div class="eyebrow">Încearcă-l</div><h2>Prototip interactiv</h2></div>
   <div class="live">
@@ -274,6 +324,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
         <li><span>10 secunde de pregătire pe negru (GET READY), apoi ecranul devine <b>verde</b>: SET 1.</span></li>
         <li><span>Atinge ecranul (sau <span class="kbd">Space</span>) când termini setul: ecranul devine <b>albastru</b> (REST). Timp de 3 s poți apăsa UNDO.</span></li>
         <li><span>În ultimele 5 secunde ecranul devine <b>portocaliu</b>; urmează 3 beep-uri, flash, apoi setul următor.</span></li>
+        <li><span><b>Warm-up și Stretch:</b> alege 5′ sau 10′ pe ecranul de start. Folosește ×10 ca să treci rapid prin încălzire, pregătire și stretching; din pauză, <b>STRETCH</b> încheie seturile.</span></li>
         <li><span><b>Rest timer:</b> setul nu are limită. După tap începe pauza, cu −15s / SKIP / +15s; când pauza se termină, setul următor pornește singur.</span></li>
         <li><span>Butonul ⏸ îngheață tot. Sesiunea se încheie din ecranul de pauză, cu <b>END</b>.</span></li>
       </ol>
@@ -473,37 +524,61 @@ const I = {
 const fmt = s => { s=Math.max(0,Math.floor(s)); const h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60;
   return h? `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; };
 const fmtI = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-const fmtUp = ms => fmtI(Math.max(0,Math.ceil(ms/1000)));    // remaining, rounded up
-const fmtEl = ms => fmtI(Math.max(0,Math.floor(ms/1000)));   // stopwatch, rounded down
-const ring = f => `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="val" pathLength="100" style="stroke-dashoffset:${(100-Math.max(0,Math.min(1,f))*100).toFixed(2)}"/></svg>`;
-const modeChip = m => `<span class="chip">${m==='airpods'?I.pods+'AirPods':I.music+'Music'}</span>`;
+const fmtUp = ms => fmtI(Math.max(0,Math.ceil(ms/1000)));
+const fmtEl = ms => fmtI(Math.max(0,Math.floor(ms/1000)));
+const cl01 = x => Math.max(0,Math.min(1,x));
+const hhmm = new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit'});
+const ring = f => `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="val" pathLength="100" style="stroke-dashoffset:${(100-cl01(f)*100).toFixed(2)}"/></svg>`;
 const restCtl = '<div class="restctl"><button class="restbtn" data-act="r-">−15s</button><button class="restbtn skip" data-act="skip">Skip</button><button class="restbtn" data-act="r+">+15s</button></div>';
+const strip = segs => `<div class="strip">${segs.map(g=>`<i class="${g.open?'open':''}" style="flex-grow:${g.len}"><b style="width:${(cl01(g.fill)*100).toFixed(1)}%"></b></i>`).join('')}</div>`;
 
 function timerScr(o){
+  const mode=o.mode||'airpods';
+  const bigCls = [o.big2||'', o.big2==='time'&&String(o.big).length>=5?'long':''].join(' ');
+  const ctl = o.ctl ? restCtl : o.stage ? `<div class="restctl" style="justify-content:center"><button class="stagebtn" data-act="stage">${o.stage}</button></div>` : '';
   return `<div class="scr ${o.cls}">
-    <div class="top"><span>Total<b>${o.total}</b></span>${modeChip(o.mode||'airpods')}</div>
+    <div class="top"><span>Total<b>${o.total}</b></span><span class="clk"><b>${o.clock||'18:42'}</b><i class="mico">${mode==='airpods'?I.pods:I.music}</i></span>${strip(o.segs||[{len:1,fill:.4}])}</div>
     <div class="mid">
       <div class="lbl">${o.label}</div>
-      <div class="dial">${ring(o.frac)}<div class="dial-in"><div class="setn ${o.big2||''}">${o.big}</div>${o.rem?`<div class="rem">${o.rem}</div>`:''}</div></div>
+      <div class="dial">${ring(o.frac)}<div class="dial-in"><div class="setn ${bigCls}">${o.big}</div>${o.rem?`<div class="rem">${o.rem}</div>`:''}</div></div>
       <div class="foot">${o.foot||''}</div>
     </div>
     ${o.undo?`<button class="undo ${o.ctl?'hi':''}" data-act="undo">Undo</button>`:''}
-    <div class="bot">${o.ctl?restCtl:''}${o.bot ? `<div class="botrow">${o.bot}</div>` : `<button class="pbtn" data-act="pause" aria-label="Pause">${I.pause}</button>`}</div>
+    <div class="bot">${ctl}${o.togo?`<div class="togo">${o.togo}</div>`:''}${o.bot ? `<div class="botrow ${o.three?'three':''}">${o.bot}</div>` : `<button class="pbtn" data-act="pause" aria-label="Pause">${I.pause}</button>`}</div>
   </div>`;
+}
+function planOf(c){
+  const parts=[]; let ms=0, approx=false, open=false;
+  if(c.warmup){ parts.push(`${c.warmup} min warm-up`); ms+=c.warmup*60000+60000; }
+  if(c.type==='emom'){ parts.push(c.target?`${c.target} × ${fmtI(c.interval)}`:`sets every ${fmtI(c.interval)}`); if(c.target) ms+=c.target*c.interval*1000; else open=true; }
+  else { parts.push(c.target?`${c.target} sets, ${fmtI(c.rest)} rest`:`sets, ${fmtI(c.rest)} rest`); if(c.target){ ms+=c.target*45000+(c.target-1)*c.rest*1000; approx=true; } else open=true; }
+  if(c.stretch){ parts.push(`${c.stretch} min stretch`); ms+=60000+c.stretch*60000; }
+  const when = open ? (ms?`sets + ${fmt(ms/1000)}`:'open-ended') : `${approx?'~':''}${fmt(ms/1000)} · ends ${approx?'~':''}${hhmm.format(Date.now()+ms)}`;
+  const setsLen = c.type==='emom' ? (c.target||10)*c.interval : (c.target||5)*(45+c.rest);
+  const bar = [c.warmup&&['w',c.warmup*60], c.warmup&&['p',60], ['',setsLen], c.stretch&&['p',60], c.stretch&&['s',c.stretch*60]].filter(Boolean)
+    .map(([k,l])=>`<i class="${k}${!k&&!c.target?' o':''}" style="flex-grow:${l}"></i>`).join('');
+  return `<div class="plan"><div class="pb">${bar}</div><p>${parts.join(' → ')}</p><p class="when">${when}</p></div>`;
 }
 function setupScr(c){
   const rest = c.type==='rest';
-  const typeHint = rest ? 'Work at your own pace. When you finish a set, the rest countdown starts, then the next set.' : 'Every minute on the minute: a new set starts every interval.';
-  const warn = c.mode==='music' ? 'Cues play over your music. Tap the screen to finish a set.' : 'Other music will stop. Press your AirPods once to finish a set, twice to undo.';
+  const typeHint = rest ? 'Tap when done: the rest counts down, then the next set.' : 'A new set starts every interval.';
+  const warn = c.mode==='music' ? 'Cues play over your music. Tap the screen when a set is done.' : 'Other music stops. AirPods: press once = set done, twice = undo.';
+  const seg3 = (k)=>[0,5,10].map(m=>`<button class="${c[k]===m?'on':''}" data-act="${k}-${m}">${m?m+'′':'Off'}</button>`).join('');
   return `<div class="scr app">
     <div class="apphd"><span class="brand" style="font-size:9.5cqw">MINUTE MARK<i>.</i></span><button class="lnk" data-act="hist">History</button></div>
     <div class="fields">
       <div><div class="flab">Timer</div><div class="seg"><button class="${rest?'':'on'}" data-act="t-emom">EMOM</button><button class="${rest?'on':''}" data-act="t-rest">Rest timer</button></div><div class="hint">${typeHint}</div></div>
-      <div><div class="flab">${rest?'Rest between sets':'Interval'}</div><div class="stepper"><button data-act="dur-" aria-label="Shorter">−</button><span>${fmtI(rest?c.rest:c.interval)}</span><button data-act="dur+" aria-label="Longer">+</button></div></div>
-      <div><div class="flab">Target sets</div><div class="stepper sm"><button data-act="tg-" aria-label="Fewer sets">−</button><span>${c.target||'∞'}</span><button data-act="tg+" aria-label="More sets">+</button></div></div>
+      <div class="pair">
+        <div><div class="flab">${rest?'Rest':'Interval'}</div><div class="stepper half"><button data-act="dur-" aria-label="Shorter">−</button><span>${fmtI(rest?c.rest:c.interval)}</span><button data-act="dur+" aria-label="Longer">+</button></div></div>
+        <div><div class="flab">Target sets</div><div class="stepper half"><button data-act="tg-" aria-label="Fewer sets">−</button><span>${c.target||'∞'}</span><button data-act="tg+" aria-label="More sets">+</button></div></div>
+      </div>
+      <div class="pair">
+        <div><div class="flab"><span class="dotw"></span>Warm-up</div><div class="seg seg3">${seg3('warmup')}</div></div>
+        <div><div class="flab"><span class="dots"></span>Stretch</div><div class="seg seg3">${seg3('stretch')}</div></div>
+      </div>
       <div><div class="flab">Audio</div><div class="seg"><button class="${c.mode==='airpods'?'on':''}" data-act="m-air">${I.pods}AirPods</button><button class="${c.mode==='music'?'on':''}" data-act="m-mus">${I.music}With music</button></div><div class="hint">${warn}</div></div>
     </div>
-    <div class="startbar"><button class="bigbtn go" data-act="start">Start</button></div>
+    <div class="startbar">${planOf(c)}<button class="bigbtn go" data-act="start">Start</button></div>
   </div>`;
 }
 function summaryScr(d){
@@ -513,6 +588,7 @@ function summaryScr(d){
   const scale = d.type==='rest' ? Math.max(1,mx) : d.interval;
   const bars = d.durs.map(x=> x==null? '<div class="bar miss" title="not marked"></div>' : `<div class="bar ${x===mx&&marked.length>2?'slow':''}" style="height:${Math.max(4,Math.min(100,x/scale*100))}%"></div>`).join('');
   const cap = d.type==='rest' ? `set time · rest ${fmtI(d.rest)}` : `set time / ${fmtI(d.interval)}`;
+  const stages = d.warmup||d.stretch ? `<div class="hint" style="padding:0 7cqw;margin-top:2cqw;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;font-size:3cqw">Session ${d.session}${d.warmup?` · <span class="dotw"></span>warm-up ${fmtI(d.warmup)}`:''}${d.stretch?` · <span class="dots"></span>stretch ${fmtI(d.stretch)}`:''}</div>` : '';
   return `<div class="scr app">
     <div class="apphd"><span class="brand" style="font-size:${d.target?'7.4':'9'}cqw">${d.target?'TARGET REACHED':'DONE'}<i>.</i></span><span class="hint" style="margin:0">${d.when}</span></div>
     <div class="stats">
@@ -520,6 +596,7 @@ function summaryScr(d){
       <div class="stat"><b>${d.total}</b><span>Total</span></div>
       <div class="stat"><b>${avg!=null?avg+'s':'—'}</b><span>Avg set</span></div>
     </div>
+    ${stages}
     ${d.durs.length?`<div class="chart">${bars}</div><div class="chart-cap"><span>Set 1</span><span>${cap}</span><span>${d.durs.length}</span></div>`:''}
     <div class="note"><em>Exercise · note</em>${d.note}</div>
     <div class="row2">${d.target?'<button class="bigbtn ghost" data-act="keep">Keep going</button>':'<button class="bigbtn ghost" data-act="discard">Discard</button>'}<button class="bigbtn go" data-act="save">Save</button></div>
@@ -532,37 +609,41 @@ function historyScr(rows){
   </div>`;
 }
 const HIST = [
-  {d:'Today, 07:45',s:14,t:'14:00',i:'EMOM 1:00',a:'38s',n:'Push-ups × 15 · last 3 were tough'},
+  {d:'Today, 07:45',s:12,t:'12:00',i:'EMOM 1:00 · +warm-up · +stretch',a:'38s',n:'Push-ups × 15 · last 3 were tough'},
   {d:'Mon, Sep 21',s:5,t:'11:40',i:'rest 1:30',a:'44s',n:'Bench press 80 kg × 6'},
   {d:'Fri, Sep 18',s:10,t:'15:00',i:'EMOM 1:30',a:'52s',n:'Pull-ups × 6'},
-  {d:'Wed, Sep 16',s:4,t:'09:10',i:'rest 2:00',a:'38s',n:'Deadlift 120 kg × 5'},
+  {d:'Wed, Sep 16',s:4,t:'09:10',i:'rest 2:00 · +stretch',a:'38s',n:'Deadlift 120 kg × 5'},
   {d:'Mon, Sep 14',s:16,t:'16:00',i:'EMOM 1:00',a:'29s',n:'Goblet squats 20 kg × 10'}
 ];
+// strip presets for the gallery: warm · prep · sets · prep · stretch
+const SG = (w,p1,st,p2,sr,open) => [{len:5,fill:w},{len:1,fill:p1},{len:12,fill:st,open},{len:1,fill:p2},{len:10,fill:sr}];
 
 /* static gallery */
+const C0 = {type:'emom',interval:60,rest:60,target:12,mode:'airpods',warmup:5,stretch:10};
 const G = [
-  ['Start', 'Tipul de timer (EMOM sau Rest timer), interval sau pauză, țintă opțională, mod audio. Ultimele setări se țin minte.', setupScr({type:'emom',interval:60,rest:60,target:0,mode:'airpods'})],
-  ['Get ready', '10 s pe negru. Timp să lași telefonul jos.', timerScr({cls:'ph-ready',label:'Get ready',big:'7',big2:'xl',frac:.7,total:'00:00',foot:'Set 1 starts soon'})],
-  ['EMOM · Work', 'Numărul setului în inel, timpul până la următorul minut sub el.', timerScr({cls:'ph-work',label:'Set',big:'8',rem:'0:42',frac:.7,total:'07:18',foot:'Tap or press AirPods when done'})],
-  ['EMOM · Rest', 'După tap sau AirPods. Se afișează durata setului.', timerScr({cls:'ph-rest',label:'Rest',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8: 34 s · next: set 9'})],
-  ['Ultimele 5 s', 'Portocaliu, beep-uri la 3, 2, 1. La fel în ambele moduri.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',big2:'xl',frac:.05,total:'07:57',foot:'Get ready'})],
-  ['Rest timer · Start', 'În loc de interval se alege pauza dintre seturi: 0:15–5:00, implicit 1:00.', setupScr({type:'rest',interval:60,rest:60,target:0,mode:'airpods'})],
-  ['Rest timer · Set', 'Fără limită de timp: durata setului crește sub numărul lui. Inelul se umple o dată pe minut.', timerScr({cls:'ph-work',label:'Set',big:'3',rem:'0:41',frac:.68,total:'04:12',foot:'Tap or press AirPods when done'})],
-  ['Rest timer · Rest', 'Numărătoarea inversă e cifra mare. −15s / SKIP / +15s schimbă doar pauza curentă.', timerScr({cls:'ph-rest',label:'Rest',big:'0:48',big2:'time',frac:.8,total:'04:25',foot:'Set 3: 41 s · next: set 4',ctl:1})],
-  ['Paused', 'Totul e înghețat. Singurul loc din care poți termina sesiunea.', timerScr({cls:'ph-paused',label:'Paused',big:'8',rem:'0:18',frac:.3,total:'07:42',foot:'Set 8 · rest',bot:'<button class="bigbtn ghost">End</button><button class="bigbtn go">Resume</button>'})],
-  ['Summary', 'Durata fiecărui set, cel mai lent în portocaliu. Notă înainte de salvare.', summaryScr({type:'emom',interval:60,when:'Sep 23 · 07:45',total:'14:00',durs:[24,26,27,29,30,31,33,34,null,37,39,42,46,51],note:'Push-ups × 15 · last 3 sets were tough'})],
-  ['History', 'Toate sesiunile, cele mai noi primele, salvate local. Tipul de timer apare pe fiecare rând.', historyScr(HIST)]
+  ['Start', 'Tipul de timer, interval sau pauză, țintă, încălzire și stretching (Off / 5′ / 10′), mod audio. Jos: planul sesiunii, durata și ora de final.', setupScr(C0)],
+  ['Warm-up', 'Coral. Numărătoare inversă, apoi 1 min de pregătire. SKIP WARM-UP sare direct la pregătire.', timerScr({cls:'ph-warm',label:'Warm-up',big:'4:12',big2:'time',frac:.84,total:'00:48',foot:'Then 1 min to get ready',stage:'Skip warm-up',segs:SG(.16,0,0,0,0),togo:'28:12 to go'})],
+  ['Sets start in', 'Minutul de pregătire, portocaliu. În ultimele 10 s cifrele devin mari.', timerScr({cls:'ph-prep',label:'Sets start in',big:'0:42',big2:'time',frac:.7,total:'05:18',foot:'Set 1 · EMOM',stage:'Skip',segs:SG(1,.3,0,0,0),togo:'23:42 to go'})],
+  ['EMOM · Work', 'Numărul setului în inel, timpul până la următorul minut sub el. Sus: Total, ora și banda sesiunii; jos: cât mai e.', timerScr({cls:'ph-work',label:'Set',big:'8',rem:'0:42',frac:.7,total:'13:18',foot:'Tap or press AirPods when done',segs:SG(1,1,.6,0,0),togo:'15:42 to go'})],
+  ['EMOM · Rest', 'După tap sau AirPods. Se afișează durata setului.', timerScr({cls:'ph-rest',label:'Rest',big:'8',rem:'0:18',frac:.3,total:'13:42',foot:'Set 8: 34 s · next: set 9',segs:SG(1,1,.63,0,0),togo:'15:18 to go'})],
+  ['Ultimele 5 s', 'Portocaliu, beep-uri la 3, 2, 1. La fel în ambele moduri.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',big2:'xl',frac:.05,total:'13:57',foot:'Get ready',segs:SG(1,1,.66,0,0),togo:'15:03 to go'})],
+  ['Rest timer · Set', 'Fără limită de timp: durata setului crește sub numărul lui. Fără țintă, segmentul seturilor e hașurat.', timerScr({cls:'ph-work',label:'Set',big:'3',rem:'0:41',frac:.68,total:'04:12',foot:'Tap or press AirPods when done',segs:SG(0,1,.3,0,0,true).slice(1),togo:'sets + 11:00 to go'})],
+  ['Rest timer · Rest', 'Numărătoarea inversă e cifra mare. −15s / SKIP / +15s schimbă doar pauza curentă.', timerScr({cls:'ph-rest',label:'Rest',big:'0:48',big2:'time',frac:.8,total:'04:25',foot:'Set 3: 41 s · next: set 4',ctl:1,segs:SG(0,1,.33,0,0,true).slice(1),togo:'sets + 11:00 to go'})],
+  ['Paused', 'Totul e înghețat. De aici: END (rezumat), STRETCH (încheie seturile și trece la stretching) sau RESUME.', timerScr({cls:'ph-paused',label:'Paused',big:'8',rem:'0:18',frac:.3,total:'13:42',foot:'Set 8 · rest',segs:SG(1,1,.63,0,0),togo:'15:18 to go',three:1,bot:'<button class="bigbtn ghost">End</button><button class="bigbtn stretchbtn">Stretch</button><button class="bigbtn go">Resume</button>'})],
+  ['Stretch', 'Violet. După cele 10 beep-uri de final și minutul de pregătire. La final: acordul și rezumatul.', timerScr({cls:'ph-stretch',label:'Stretch',big:'8:30',big2:'time',frac:.85,total:'20:30',foot:'The session ends after this',stage:'Skip stretch',segs:SG(1,1,1,1,.15),togo:'08:30 to go'})],
+  ['Summary', 'Durata fiecărui set, cel mai lent în portocaliu. Durata sesiunii, încălzirea și stretchingul făcute.', summaryScr({type:'emom',interval:60,when:'Sep 23 · 07:45',total:'12:00',session:'29:10',warmup:300,stretch:600,durs:[24,26,27,29,30,31,33,34,null,37,39,42],note:'Push-ups × 15 · last 3 sets were tough'})],
+  ['History', 'Toate sesiunile, cele mai noi primele, salvate local. Tipul de timer și etapele apar pe fiecare rând.', historyScr(HIST)]
 ];
 document.getElementById('gallery').innerHTML = G.map(([t,c,h])=>`<figure><div class="phone" aria-hidden="true"><div class="notch"></div><div class="screen">${h}</div></div><figcaption><b>${t}</b>${c}</figcaption></figure>`).join('');
 
-/* ---------- live prototype: same session model as the app (session time e, ms; negative while getting ready) ---------- */
-const READY=10000, LAST=5000, CD=[3000,2000,1000], STEP=15000;
+/* ---------- live prototype: same timeline as the app (session ms; negative during warm-up and get-ready) ---------- */
+const LAST=5000, CD=[3000,2000,1000], STEP=15000, PREP=60000;
 const host = document.getElementById('live');
 const flash = document.createElement('div'); flash.className='flash';
 const body = document.createElement('div'); body.style.cssText='position:absolute;inset:0';
 host.append(body, flash);
 
-let cfg = {type:'emom',interval:60,rest:60,target:0,mode:'airpods'};
+let cfg = {type:'emom',interval:60,rest:60,target:0,mode:'airpods',warmup:0,stretch:0};
 try{ const s=JSON.parse(localStorage.getItem('emom-cfg')||'null'); if(s) cfg=Object.assign(cfg,s);}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('emom-cfg',JSON.stringify(cfg))}catch(e){}};
 let view='setup', speed=1, soundOn=true, S=null, last=performance.now(), lastKey='', summary=null;
@@ -572,6 +653,7 @@ function audio(){ if(!ac){ try{ ac=new (window.AudioContext||window.webkitAudioC
 function tone(f,d,t0=0,v=.25){ if(!soundOn||!ac) return; try{ const o=ac.createOscillator(), g=ac.createGain(), t=ac.currentTime+t0;
   o.type='square'; o.frequency.value=f; g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.001,t+d); o.connect(g).connect(ac.destination); o.start(t); o.stop(t+d+.02);}catch(e){} }
 const short=()=>tone(880,.12), long=()=>tone(1320,.6,0,.3), confirm=()=>{tone(990,.08);tone(660,.1,.1)}, fin=()=>{tone(660,.15);tone(880,.15,.16);tone(1320,.4,.32)};
+const tenBeeps=()=>{ for(let i=0;i<10;i++) tone(1175,.09,i*.16,.3); };
 function say(t){ if(!soundOn||speed>1||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US';
   const v=speechSynthesis.getVoices().find(v=>/^en-US/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u);}catch(e){} }
 function doFlash(){ flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go'); }
@@ -581,9 +663,15 @@ function restCur(){ const L=S.rsets, l=L[L.length-1];
   if(!l) return {set:1,start:0,doneAt:null,restEnd:null,implicit:true};
   if(l.doneAt!=null && S.e>=l.restEnd) return {set:L.length+1,start:l.restEnd,doneAt:null,restEnd:null,implicit:true};
   return {set:L.length,...l,implicit:false}; }
+function setsDone(){ if(S.type==='rest') return S.rsets.filter(r=>r.doneAt!=null).length; const e=Math.min(S.mainEnd??Infinity,targetMs()); return Number.isFinite(e)?Math.ceil(e/S.I):0; }
 function vw(){
   const e=S.e;
-  if(e<0) return {phase:'ready',set:1,rem:-e,frac:-e/READY};
+  if(S.mainEnd!=null && e>=S.mainEnd){ const d=e-S.mainEnd;
+    if(d<PREP) return {phase:'prep',set:setsDone(),rem:PREP-d,frac:(PREP-d)/PREP};
+    if(d<PREP+S.ST) return {phase:'stretch',set:setsDone(),rem:PREP+S.ST-d,frac:(PREP+S.ST-d)/S.ST};
+    return {phase:'done',set:setsDone(),frac:0}; }
+  if(e<-S.R) return {phase:'warmup',set:1,rem:-S.R-e,frac:(-S.R-e)/S.W};
+  if(e<0) return {phase:'ready',set:1,rem:-e,frac:-e/S.R,long:S.R>10000};
   if(e>=targetMs()) return {phase:'target',set:S.target,frac:0};
   if(S.type==='rest'){ const c=restCur();
     if(c.doneAt==null){ const inSet=e-c.start; return {phase:'work',set:c.set,inSet,frac:(inSet%60000)/60000}; }
@@ -592,39 +680,76 @@ function vw(){
   const set=Math.floor(e/S.I)+1, inSet=e-(set-1)*S.I, rem=S.I-inSet, m=S.marks[set];
   return {phase:rem<=LAST?'last':m!=null?'rest':'work',set,inSet,rem,frac:rem/S.I,markedAt:m};
 }
+const inSets = v => v.phase==='work'||v.phase==='rest'||v.phase==='last';
 function cues(from,to){
   const out=[]; const push=(at,kind,x={})=>{ if(at>=from&&at<to) out.push({at,kind,...x}); };
+  if(S.W){ for(const c of CD) push(-S.R-c,'tick'); push(-S.R,'stage',{say:'Get ready. Sets start in one minute.'}); }
   for(const c of CD) push(-c,'tick');
   if(S.type==='rest'){ push(0,'go',{set:1});
     S.rsets.forEach((r,i)=>{ const set=i+2; if(r.restEnd==null||(S.target&&set>S.target)) return; for(const c of CD) if(r.restEnd-c>=r.doneAt) push(r.restEnd-c,'tick'); push(r.restEnd,'go',{set}); });
-    return out.sort((a,b)=>a.at-b.at); }
-  const end=targetMs();
-  for(let k=Math.max(0,Math.floor(from/S.I)); k*S.I<to+S.I; k++){ const b=k*S.I; if(b>end) break; if(b===end){ push(b,'target'); break; }
-    push(b,'go',{set:k+1,min:b>0&&b%300000===0?b/60000:null}); for(const c of CD) if(b+S.I-c<=end) push(b+S.I-c,'tick'); }
-  return out.sort((a,b)=>a.at-b.at);
+  } else {
+    const end=targetMs();
+    for(let k=Math.max(0,Math.floor(from/S.I)); k*S.I<to+S.I; k++){ const b=k*S.I; if(b>end) break; if(b===end){ push(b,'target'); break; }
+      push(b,'go',{set:k+1,min:b>0&&b%300000===0?b/60000:null}); for(const c of CD) if(b+S.I-c<=end) push(b+S.I-c,'tick'); }
+  }
+  let kept = out.filter(c=>c.at<0||c.at<(S.mainEnd??Infinity));
+  if(S.mainEnd!=null){ const n=out.length, a=S.mainEnd+PREP, b=a+S.ST;
+    for(const c of CD) push(a-c,'tick'); push(a,'stage',{say:`Stretch. ${S.ST/60000} minutes.`}); for(const c of CD) push(b-c,'tick'); push(b,'finish');
+    kept = kept.concat(out.slice(n)); }
+  return kept.sort((a,b)=>a.at-b.at);
+}
+function segs(){
+  const e=S.e, out=[];
+  if(S.W) out.push({len:S.W,fill:(e+S.R+S.W)/S.W});
+  out.push({len:S.R,fill:(e+S.R)/S.R});
+  let len, open=false;
+  if(S.mainEnd!=null) len=Math.max(1,S.mainEnd); else if(S.target&&S.type==='emom') len=S.target*S.I; else if(S.target) len=S.target*(45000+S.restMs); else { open=true; len=Math.max(600000,e+60000); }
+  out.push({len,fill:S.mainEnd!=null?1:e/len,open:open&&S.mainEnd==null});
+  if(S.ST){ const d=S.mainEnd!=null?e-S.mainEnd:-1; out.push({len:PREP,fill:d/PREP}); out.push({len:S.ST,fill:(d-PREP)/S.ST}); }
+  return out;
+}
+function toGo(v){
+  const after = S.ST ? PREP+S.ST : 0, e=S.e;
+  if(v.phase==='done'||v.phase==='target') return '00:00 to go';
+  if(v.phase==='stretch') return `${fmt(v.rem/1000)} to go`;
+  if(v.phase==='prep') return `${fmt((v.rem+S.ST)/1000)} to go`;
+  const lead = v.phase==='warmup' ? v.rem+S.R : v.phase==='ready' ? v.rem : 0;
+  if(!S.target) return lead+after ? `sets + ${fmt((lead+after)/1000)} to go` : 'open session';
+  if(S.type==='emom') return `${fmt((lead+Math.max(0,S.target*S.I-Math.max(0,e))+after)/1000)} to go`;
+  const done=S.rsets.filter(r=>r.doneAt!=null), avg=done.length?done.reduce((a,r)=>a+r.doneAt-r.start,0)/done.length:45000, left=S.target-done.length;
+  const sets = (v.phase==='rest'||v.phase==='last') ? v.rem+left*avg+Math.max(0,left-1)*S.restMs : (v.phase==='work'?Math.max(0,avg-v.inSet):avg)+Math.max(0,left-1)*(S.restMs+avg);
+  return `~${fmt((lead+sets+after)/1000)} to go`;
 }
 
-function start(){ audio(); S={type:cfg.type,I:cfg.interval*1000,restMs:cfg.rest*1000,target:cfg.target,e:-READY,paused:false,marks:{},rsets:[],markedE:-1e9}; view='run'; say('Get ready'); }
+function start(){ audio(); const W=cfg.warmup*60000, R=W?PREP:10000;
+  S={type:cfg.type,I:cfg.interval*1000,restMs:cfg.rest*1000,target:cfg.target,W,R,ST:cfg.stretch*60000,e:-(W+R),wall:0,paused:false,marks:{},rsets:[],markedE:-1e9,mainEnd:null,skW:0,skS:0};
+  view='run'; say(W?`Warm-up. ${cfg.warmup} minutes.`:'Get ready'); }
+function endSets(at){ if(S.mainEnd!=null||!S.ST) return; S.mainEnd = at ?? Math.min(S.e,targetMs()); S.e=Math.max(S.e,S.mainEnd); S.paused=false; tenBeeps(); setTimeout(()=>say('Stretching in one minute.'),1800); }
 function finish(targetReached){
-  const end=Math.min(S.e,targetMs());
+  const end=Math.min(S.e,targetMs(),S.mainEnd??Infinity);
   let durs;
-  if(S.type==='rest') durs=S.rsets.filter(r=>r.doneAt!=null).map(r=>Math.round((r.doneAt-r.start)/1000));
+  if(S.type==='rest') durs=S.rsets.filter(r=>r.doneAt!=null&&r.doneAt<=end).map(r=>Math.round((r.doneAt-r.start)/1000));
   else { const n=end<=0?0:Math.floor(end/S.I)+(end%S.I===0?0:1); durs=[]; for(let i=1;i<=n;i++) durs.push(S.marks[i]!=null?Math.round(S.marks[i]/1000):null); }
-  summary={type:S.type,interval:S.I/1000,rest:S.restMs/1000,when:'Just now',total:fmt(Math.max(0,end)/1000),durs,note:'Add the exercise and any notes…',target:targetReached};
-  fin(); say(targetReached?`Target reached. ${durs.length} sets.`:`Session complete. ${durs.length} ${durs.length===1?'set':'sets'}.`);
+  const warm = S.W ? Math.max(0,Math.min(S.W,S.e+S.R+S.W)-S.skW) : 0;
+  const str = S.mainEnd!=null ? Math.max(0,Math.min(S.ST,S.e-S.mainEnd-PREP)-S.skS) : 0;
+  summary={type:S.type,interval:S.I/1000,rest:S.restMs/1000,when:'Just now',total:fmt(Math.max(0,end)/1000),session:fmt(S.wall/1000),warmup:Math.round(warm/1000),stretch:Math.round(str/1000),durs,note:'Add the exercise and any notes…',target:targetReached};
+  if(targetReached){ tenBeeps(); setTimeout(()=>say(`Target reached. ${durs.length} sets.`),1800); }
+  else { fin(); say(`Session complete. ${durs.length} ${durs.length===1?'set':'sets'}.`); }
   S.paused=true; view='summary';
 }
 
 function tick(now){
   const dt=(now-last)*speed; last=now;
   if(view==='run' && S && !S.paused){
-    const prev=S.e; S.e+=dt;
+    const prev=S.e; S.e+=dt; S.wall+=dt;
     for(const c of cues(prev,S.e)){
       if(c.kind==='tick') short();
       else if(c.kind==='go'){ long(); doFlash(); say(c.min?`${c.min} minutes`:`Set ${c.set}`); }
-      else if(c.kind==='target'){ S.e=targetMs(); finish(true); break; }
+      else if(c.kind==='stage'){ long(); doFlash(); say(c.say); }
+      else if(c.kind==='target'){ if(S.ST){ endSets(targetMs()); } else { S.e=targetMs(); finish(true); } break; }
+      else if(c.kind==='finish'){ finish(false); break; }
     }
-  }
+  } else if(view==='run' && S) S.wall+=dt;
   render();
   requestAnimationFrame(tick);
 }
@@ -635,21 +760,28 @@ function render(){
   else if(view==='hist'){ key='hist'; if(key!==lastKey) html=historyScr(HIST); }
   else if(view==='summary'){ key='sum'; if(key!==lastKey) html=summaryScr(summary); }
   else {
-    const v=vw(), total=fmt(Math.max(0,S.e)/1000), rest=S.type==='rest';
+    const v=vw(), rest=S.type==='rest';
     const done=n=>S.marks[n]!=null?`Set ${n}: ${Math.round(S.marks[n]/1000)} s`:null;
     const secs=()=>String(Math.max(1,Math.ceil(v.rem/1000)));
+    const cd=()=>v.rem>10000?{big:fmtUp(v.rem),big2:'time'}:{big:secs(),big2:'xl'};
     const hint=cfg.mode==='airpods'?'Tap or press AirPods when done':'Tap anywhere when done';
     let o;
-    if(v.phase==='ready') o={cls:'ph-ready',label:'Get ready',big:secs(),big2:'xl',frac:v.frac,total,foot:'Set 1 starts soon'};
-    else if(v.phase==='last') o={cls:'ph-prep',label:`Set ${v.set+1} in`,big:secs(),big2:'xl',frac:v.frac,total,foot:done(v.set)??'Get ready',ctl:rest};
+    if(v.phase==='warmup') o={cls:'ph-warm',label:'Warm-up',big:fmtUp(v.rem),big2:'time',frac:v.frac,foot:'Then 1 min to get ready',stage:'Skip warm-up'};
+    else if(v.phase==='ready') o=v.long?{cls:'ph-prep',label:'Sets start in',...cd(),frac:v.frac,foot:`Set 1 · ${rest?'Rest timer':'EMOM'}`,stage:'Skip'}:{cls:'ph-ready',label:'Get ready',big:secs(),big2:'xl',frac:v.frac,foot:'Set 1 starts soon'};
+    else if(v.phase==='prep') o={cls:'ph-prep',label:'Stretch in',...cd(),frac:v.frac,foot:`${v.set} ${v.set===1?'set':'sets'} done. Well done.`,stage:'Skip'};
+    else if(v.phase==='stretch') o={cls:'ph-stretch',label:'Stretch',big:fmtUp(v.rem),big2:'time',frac:v.frac,foot:'The session ends after this',stage:'Skip stretch'};
+    else if(v.phase==='last') o={cls:'ph-prep',label:`Set ${v.set+1} in`,big:secs(),big2:'xl',frac:v.frac,foot:done(v.set)??'Get ready',ctl:rest};
     else if(v.phase==='rest') o=rest
-      ? {cls:'ph-rest',label:'Rest',big:fmtUp(v.rem),big2:'time',frac:v.frac,total,foot:`${done(v.set)} · next: set ${v.set+1}`,ctl:1}
-      : {cls:'ph-rest',label:'Rest',big:String(v.set),rem:fmtUp(v.rem),frac:v.frac,total,foot:`${done(v.set)} · next: set ${v.set+1}`};
-    else o={cls:'ph-work',label:'Set',big:String(v.set),rem:rest?fmtEl(v.inSet):fmtUp(v.rem),frac:v.frac,total,foot:hint};
+      ? {cls:'ph-rest',label:'Rest',big:fmtUp(v.rem),big2:'time',frac:v.frac,foot:`${done(v.set)} · next: set ${v.set+1}`,ctl:1}
+      : {cls:'ph-rest',label:'Rest',big:String(v.set),rem:fmtUp(v.rem),frac:v.frac,foot:`${done(v.set)} · next: set ${v.set+1}`};
+    else if(v.phase==='work') o={cls:'ph-work',label:'Set',big:String(v.set),rem:rest?fmtEl(v.inSet):fmtUp(v.rem),frac:v.frac,foot:hint};
+    else o={cls:'ph-ready',label:'Done',big:String(v.set),frac:0,foot:''};
     o.undo = v.phase==='rest' && S.e-S.markedE<3000;
-    o.mode=cfg.mode;
-    if(S.paused){ o.cls='ph-paused'; o.foot=v.phase==='ready'?'Countdown paused':`Set ${v.set} · ${{rest:'rest',last:'next set soon'}[v.phase]??'work'}`; o.label='Paused'; o.undo=false; o.ctl=false;
-      o.bot='<button class="bigbtn ghost" data-act="end">End</button><button class="bigbtn go" data-act="resume">Resume</button>'; }
+    o.mode=cfg.mode; o.total=fmt(S.wall/1000); o.clock=hhmm.format(Date.now()); o.segs=segs(); o.togo=toGo(v);
+    if(S.paused){ const stretchOk = S.ST && S.mainEnd==null && inSets(v);
+      o.cls='ph-paused'; o.foot={warmup:'Warm-up paused',ready:'Countdown paused',prep:'Countdown paused',stretch:'Stretch paused'}[v.phase] ?? `Set ${v.set} · ${{rest:'rest',last:'next set soon'}[v.phase]??'work'}`;
+      o.label='Paused'; o.undo=false; o.ctl=false; o.stage=null; o.three=stretchOk;
+      o.bot=`<button class="bigbtn ghost" data-act="end">End</button>${stretchOk?'<button class="bigbtn stretchbtn" data-act="stretch">Stretch</button>':''}<button class="bigbtn go" data-act="resume">Resume</button>`; }
     html=timerScr(o); key=html;
   }
   if(html && key!==lastKey){ body.innerHTML=html; lastKey=key; }
@@ -658,16 +790,19 @@ function render(){
 function tap(){
   if(view!=='run'||!S||S.paused) return;
   const v=vw(); if(v.phase!=='work') return;
-  S.marks[v.set]=v.inSet; S.markedE=S.e; confirm(); say('Rest');
+  S.marks[v.set]=v.inSet; S.markedE=S.e;
   if(S.type==='rest'){ const c=restCur(), r={start:c.start,doneAt:S.e,restEnd:S.e+S.restMs};
     if(c.implicit) S.rsets.push(r); else S.rsets[S.rsets.length-1]=r;
-    if(S.e>=targetMs()) finish(true); }
+    if(S.e>=targetMs()){ if(S.ST) endSets(S.e); else finish(true); return; } }
+  confirm(); say('Rest');
 }
-function undo(){ const v=vw(); if(S.paused||v.markedAt==null) return;
+function undo(){ const v=vw(); if(S.paused||v.markedAt==null||!inSets(v)) return;
   delete S.marks[v.set]; if(S.type==='rest'){ const l=S.rsets[S.rsets.length-1]; l.doneAt=null; l.restEnd=null; }
   S.markedE=-1e9; tone(520,.1); }
 function adjust(d){ const v=vw(); if(S.type!=='rest'||S.paused||(v.phase!=='rest'&&v.phase!=='last')) return;
   const l=S.rsets[S.rsets.length-1]; l.restEnd=Math.max(S.e, l.restEnd+d); tone(d>0?880:660,.07); }
+function skipStage(){ const v=vw(); if(S.paused||!['warmup','ready','prep','stretch'].includes(v.phase)) return;
+  if(v.phase==='warmup') S.skW+=v.rem; if(v.phase==='stretch') S.skS+=v.rem; S.e+=v.rem; if(v.phase==='stretch') finish(false); }
 
 host.addEventListener('click',e=>{
   const a=e.target.closest('[data-act]'); audio();
@@ -677,6 +812,7 @@ host.addEventListener('click',e=>{
   else if(k==='dur+') cfg[rk]=Math.min(300,cfg[rk]+15);
   else if(k==='t-emom') cfg.type='emom';
   else if(k==='t-rest') cfg.type='rest';
+  else if(/^(warmup|stretch)-\d+$/.test(k)){ const [n,m]=k.split('-'); cfg[n]=+m; }
   else if(k==='tg-') cfg.target=Math.max(0,cfg.target-1);
   else if(k==='tg+') cfg.target=Math.min(99,cfg.target+1);
   else if(k==='m-air') cfg.mode='airpods';
@@ -688,6 +824,8 @@ host.addEventListener('click',e=>{
   else if(k==='pause' && S){ S.paused=true; tone(520,.12); say('Paused'); }
   else if(k==='resume' && S){ S.paused=false; tone(780,.12); say('Resuming'); }
   else if(k==='end' && S){ finish(false); }
+  else if(k==='stretch' && S){ endSets(); }
+  else if(k==='stage' && S){ skipStage(); }
   else if(k==='undo' && S){ undo(); }
   else if(k==='r-' && S){ adjust(-STEP); }
   else if(k==='r+' && S){ adjust(STEP); }

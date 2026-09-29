@@ -55,7 +55,7 @@ const app = {
     lastE = null;
     lastTitle = '';
     const started = audio.start(s.mode, { onDone: () => app.markDone(), onUndo: () => app.undo() });
-    audio.say('Get ready');
+    audio.say(this.cfg.warmup ? `Warm-up. ${this.cfg.warmup} minutes.` : 'Get ready');
     keepAwake();
     store.persistStorage();
     persist(true);
@@ -70,7 +70,12 @@ const app = {
     this.markedWallAt = Date.now();
     if (s.type === 'rest') {
       audio.cancelAll(); // the next set's cues depend on this mark
-      if (E.view(s, Date.now()).phase === 'target') { finish({ targetReached: true }); return; }
+      if (E.view(s, Date.now()).phase === 'target') {
+        audio.setsOver();
+        if (s.stretchMs) afterSets(E.targetMs(s), 'Stretching in one minute.');
+        else finish({ targetReached: true });
+        return;
+      }
     }
     audio.confirm();
     if (this.cfg.sayRest) audio.say('Rest');
@@ -104,6 +109,26 @@ const app = {
     audio.cancelAll();
     persist(true);
     tick();
+  },
+
+  /** Skip the rest of the warm-up, a get-ready / prep minute, or the stretch. */
+  skipStage() {
+    const s = this.session;
+    if (!s || !E.skipStage(s, Date.now())) return;
+    audio.cancelAll();
+    persist(true);
+    tick();
+  },
+
+  /** From the pause screen: leave the sets and go to prep + stretch. */
+  async stretch() {
+    const s = this.session;
+    if (!s) return;
+    if (!audio.ready) await audio.start(s.mode, { onDone: () => app.markDone(), onUndo: () => app.undo() });
+    else await audio.wake();
+    audio.setsOver();
+    afterSets(undefined, 'Stretching in one minute.');
+    keepAwake();
   },
 
   pause() {
@@ -206,8 +231,13 @@ function tick() {
     audio.schedule(E.cuesBetween(s, e, e + SCHEDULE_AHEAD_MS), e);
   }
 
+  if (v.phase === 'done' && !v.paused) { finish({ targetReached: false }); return; }
+
   const title = v.paused ? 'Paused'
-    : v.phase === 'ready' ? 'Get ready'
+    : v.phase === 'warmup' ? 'Warm-up'
+    : v.phase === 'ready' ? (v.long ? 'Sets start in 1 min' : 'Get ready')
+    : v.phase === 'prep' ? 'Stretch in 1 min'
+    : v.phase === 'stretch' ? 'Stretch'
     : v.phase === 'rest' ? `Set ${v.set} · Rest`
     : v.phase === 'last' ? `Set ${v.set + 1} next`
     : `Set ${v.set}`;
@@ -216,10 +246,31 @@ function tick() {
   persist(false);
 }
 
+/** The sets are over and a stretch follows: 1 min prep, then stretch. */
+function afterSets(atMs, words) {
+  const s = app.session;
+  const now = Date.now();
+  if (!E.endSets(s, now, atMs)) return;
+  audio.cancelAll();
+  lastE = E.elapsed(s, now);
+  setTimeout(() => audio.say(words), 1800); // after the 10 beeps
+  persist(true);
+  tick();
+}
+
 /** A cue's moment has passed: visuals and voice (the sound itself was scheduled ahead). */
 function onCue(cue, e) {
-  if (cue.kind === 'target') { finish({ targetReached: true }); return; }
-  if (cue.kind !== 'go' || e - cue.at > STALE_VOICE_MS) return;
+  const s = app.session;
+  if (cue.kind === 'target') {
+    // the 10 end-of-sets beeps were scheduled as this cue's sound
+    if (s.stretchMs) afterSets(cue.at, 'Stretching in one minute.');
+    else finish({ targetReached: true });
+    return;
+  }
+  if (cue.kind === 'finish') { finish({ targetReached: false, chordPlayed: true }); return; }
+  if (e - cue.at > STALE_VOICE_MS) return;
+  if (cue.kind === 'stage') { runView?.flash(); setTimeout(() => audio.say(cue.say), 450); return; }
+  if (cue.kind !== 'go') return;
   runView?.flash();
   const text = app.cfg.announceMinutes && cue.announceMinutes ? `${cue.announceMinutes} minutes` : `Set ${cue.set}`;
   setTimeout(() => audio.say(text), 450); // after the long beep
@@ -237,7 +288,7 @@ function persist(force) {
   store.saveLive(app.session, now);
 }
 
-function finish({ targetReached }) {
+function finish({ targetReached, chordPlayed = false }) {
   const s = app.session;
   const now = Date.now();
   if (targetReached) E.reachTarget(s);
@@ -245,14 +296,15 @@ function finish({ targetReached }) {
   audio.cancelAll();
   const sum = E.summary(s, now);
   const rec = {
-    startedAt: s.startedAt, type: s.type, mode: s.mode, interval: sum.interval, rest: sum.rest, sets: sum.sets, totalMs: sum.totalMs,
+    startedAt: s.wallStart ?? s.startedAt, type: s.type, mode: s.mode, interval: sum.interval, rest: sum.rest, sets: sum.sets, totalMs: sum.totalMs,
+    sessionMs: sum.sessionMs, warmup: sum.warmup, stretch: sum.stretch,
     durations: sum.durations, avg: sum.avg, slowest: sum.slowest, exercise: '', note: '',
   };
   if (targetReached) {
-    if (s.type === 'rest') audio.final(); // EMOM already scheduled its target chord as a cue
-    audio.say(`Target reached. ${sum.sets} sets.`);
+    // the end-of-sets beeps already played (EMOM: scheduled as the target cue; rest timer: on the last tap)
+    setTimeout(() => audio.say(`Target reached. ${sum.sets} sets.`), 1800);
   } else {
-    audio.final();
+    if (!chordPlayed) audio.final();
     audio.say(sum.sets ? `Session complete. ${sum.sets} ${sum.sets === 1 ? 'set' : 'sets'}.` : 'Session ended.');
     audio.stopSoon();
     app.session = null;

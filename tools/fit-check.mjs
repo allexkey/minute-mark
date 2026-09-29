@@ -55,6 +55,13 @@ const SCENARIOS = [
   { name: 'paused', key: '#resume', go: async () => { await click('#pause'); } },
   { name: 'summary', key: '#save', go: async () => { await click('#end'); await sleep(300); } },
   { name: 'settings', key: '#csv', go: async () => { await js(`window.__mm.app.go('settings')`); } },
+  // warm-up and stretch
+  { name: 'setup + stages', key: '#start', go: async () => { await js(`Object.assign(window.__mm.app.cfg, { type: 'emom', warmup: 5, stretch: 10, target: 12 }); window.__mm.app.go('setup')`); } },
+  { name: 'warm-up', key: '#pause', also: '#stagectl', go: async () => { await click('#start'); await sleep(300); } },
+  { name: 'sets start in', key: '#pause', also: '#stagectl', go: () => click('#skip-stage') },
+  { name: 'paused + stretch', key: '#resume', go: async () => { await click('#skip-stage'); await sleep(200); await at(18_000); await click('#pause'); } },
+  { name: 'stretch in', key: '#pause', also: '#stagectl', go: () => click('#stretch') },
+  { name: 'stretch', key: '#pause', also: '#stagectl', go: () => click('#skip-stage') },
 ];
 
 let failures = 0;

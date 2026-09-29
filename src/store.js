@@ -8,6 +8,8 @@ export const DEFAULT_CFG = {
   interval: 60, // EMOM: seconds, 30..300 in 15 s steps
   rest: 60, // rest timer: seconds, 15..300 in 15 s steps
   target: 0, // 0 = no target
+  warmup: 0, // minutes: 0 | 5 | 10
+  stretch: 0, // minutes: 0 | 5 | 10
   mode: 'airpods', // 'airpods' | 'music'
   announceMinutes: true,
   sayRest: true,
@@ -70,11 +72,12 @@ export function persistStorage() {
 
 export function toCSV(list) {
   const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const head = ['date', 'timer', 'exercise', 'sets', 'total_seconds', 'interval_seconds', 'rest_seconds', 'avg_set_seconds', 'set_durations', 'note'];
+  const head = ['date', 'timer', 'exercise', 'sets', 'total_seconds', 'interval_seconds', 'rest_seconds', 'avg_set_seconds', 'set_durations', 'warmup_seconds', 'stretch_seconds', 'session_seconds', 'note'];
   const rows = list.map((r) => [
     new Date(r.startedAt).toISOString(), r.type ?? 'emom', r.exercise, r.sets, Math.round(r.totalMs / 1000),
     (r.type ?? 'emom') === 'emom' ? r.interval : '', r.type === 'rest' ? r.rest : '',
-    r.avg ?? '', r.durations.map((d) => d ?? '').join(' '), r.note,
+    r.avg ?? '', r.durations.map((d) => d ?? '').join(' '), r.warmup ?? '', r.stretch ?? '',
+    r.sessionMs != null ? Math.round(r.sessionMs / 1000) : '', r.note,
   ].map(esc).join(','));
   return [head.join(','), ...rows].join('\n');
 }

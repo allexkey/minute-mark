@@ -151,10 +151,16 @@ export class AudioCues {
   sound(kind, when) {
     switch (kind) {
       case 'tick': return [this.tone(880, 0.12, when)];
-      case 'go': return [this.tone(1320, 0.6, when, 0.38)];
-      case 'target': return this.chord(when);
+      case 'go': case 'stage': return [this.tone(1320, 0.6, when, 0.38)];
+      case 'target': return this.endOfSets(when);
+      case 'finish': return this.chord(when);
       default: return [];
     }
+  }
+
+  /** End of the sets: 10 short beeps. */
+  endOfSets(when) {
+    return Array.from({ length: 10 }, (_, i) => this.tone(1175, 0.09, when + i * 0.16, 0.34));
   }
 
   chord(when) {
@@ -171,6 +177,7 @@ export class AudioCues {
   pauseTone() { this.now((t) => this.tone(520, 0.14, t)); }
   resumeTone() { this.now((t) => this.tone(780, 0.14, t)); }
   final() { this.now((t) => this.chord(t)); }
+  setsOver() { this.now((t) => this.endOfSets(t)); }
 
   // ---- voice ------------------------------------------------------------------
 

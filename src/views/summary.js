@@ -28,6 +28,7 @@ export function mountSummary(root, app, rec, opts = {}) {
       <div class="stat"><b>${fmtClock(rec.totalMs)}</b><span>Total</span></div>
       <div class="stat"><b>${rec.avg != null ? `${rec.avg}s` : '—'}</b><span>Avg set</span></div>
     </div>
+    ${rec.warmup || rec.stretch ? `<p class="stages-line"><span>Session <b>${fmtClock(rec.sessionMs ?? 0)}</b></span>${rec.warmup ? `<span><i class="dot warm"></i>warm-up <b>${fmtInterval(rec.warmup)}</b></span>` : ''}${rec.stretch ? `<span><i class="dot stretch"></i>stretch <b>${fmtInterval(rec.stretch)}</b></span>` : ''}</p>` : ''}
     ${rec.sets ? `<div class="chart" role="img" aria-label="Time per set">${bars}</div>
     <div class="chart-cap"><span>Set 1</span><span>${restType ? `set time · rest ${fmtInterval(rec.rest)}` : `set time / ${fmtInterval(rec.interval)}`}</span><span>${rec.sets}</span></div>` : ''}
     <div class="fields">

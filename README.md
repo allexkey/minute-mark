@@ -1,6 +1,10 @@
 # Minute Mark
 
-A gym timer PWA for iPhone with two timers: **EMOM** (a new set every interval) and **Rest timer** (you work at your own pace; tapping starts a fixed rest countdown, then the next set starts automatically). The paragraph below describes EMOM.
+A gym timer PWA for iPhone with two timers: **EMOM** (a new set every interval) and **Rest timer** (you work at your own pace; tapping starts a fixed rest countdown, then the next set starts automatically).
+
+A session can include an optional **warm-up** before the sets and a **stretch** after them (Off / 5 / 10 min each), with a 1-minute orange get-ready countdown before each transition. When the sets end, 10 short beeps play. The run screen shows the total session time and the current clock at the top, a strip with the session's stages, and the time left until the end at the bottom.
+
+The paragraph below describes EMOM.
 
 An EMOM gym timer, built as a PWA for iPhone. Every minute it beeps and announces the set. The screen shows the set number and the total session time, and the whole screen changes colour by phase: green = work, blue = rest, orange = the last 5 s. You mark the end of a set with a tap, or with an AirPods press.
 
@@ -80,5 +84,7 @@ The build is about 27 KB of JavaScript (under 10 KB gzipped). Later it can be wr
 | Set done | Tap anywhere · AirPods single press |
 | Undo | "Undo" button (3 s) · AirPods double press |
 | Rest timer: change the current rest | −15s / +15s, Skip (AirPods presses during rest are ignored, except double = undo) |
+| Skip warm-up / get ready / stretch | "Skip" button on those screens |
+| Go to stretching (no target) | Pause → STRETCH |
 | Pause | ⏸ button |
 | End | Only from the pause screen |
