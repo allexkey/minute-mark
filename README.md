@@ -2,7 +2,7 @@
 
 A gym timer PWA for iPhone with two timers: **EMOM** (a new set every interval) and **Rest timer** (you work at your own pace; tapping starts a fixed rest countdown, then the next set starts automatically).
 
-A session can include an optional **warm-up** before the sets and a **stretch** after them (Off / 5 / 10 min each), with a 1-minute orange get-ready countdown before each transition. When the sets end, 10 short beeps play. The run screen shows the total session time and the current clock at the top, a strip with the session's stages, and the time left until the end at the bottom.
+A session can include an optional **warm-up** before the sets and a **stretch** after them (Off / 5 / 10 min each), with a 1-minute orange get-ready countdown before each transition. Every countdown ends with 5 short beeps (5-4-3-2-1), across the whole orange last-5-seconds screen. When the sets end, 10 short beeps play. While stretching, a soft short beep plays every 30 seconds. The run screen shows the total session time and the current clock at the top, a strip with the session's stages, and the time left until the end at the bottom.
 
 The paragraph below describes EMOM.
 

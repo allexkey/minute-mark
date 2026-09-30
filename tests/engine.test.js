@@ -105,21 +105,21 @@ test('ending during get-ready gives an empty summary', () => {
   assert.equal(summary(s, T0 + 2000).sets, 0);
 });
 
-test('cues: countdown, new sets, 3-2-1 before each minute', () => {
+test('cues: countdown, new sets, 5-4-3-2-1 before each minute', () => {
   const s = make();
   const cues = cuesBetween(s, -READY_MS, 120_000);
   const list = cues.map((c) => `${c.kind}${c.set ?? ''}@${c.at}`);
   assert.deepEqual(list, [
-    'tick@-3000', 'tick@-2000', 'tick@-1000',
-    'go1@0', 'tick@57000', 'tick@58000', 'tick@59000',
-    'go2@60000', 'tick@117000', 'tick@118000', 'tick@119000',
+    'tick@-5000', 'tick@-4000', 'tick@-3000', 'tick@-2000', 'tick@-1000',
+    'go1@0', 'tick@55000', 'tick@56000', 'tick@57000', 'tick@58000', 'tick@59000',
+    'go2@60000', 'tick@115000', 'tick@116000', 'tick@117000', 'tick@118000', 'tick@119000',
   ]);
 });
 
 test('cues: window is half-open and ids are stable', () => {
   const s = make();
   const a = cuesBetween(s, 57_000, 60_000).map((c) => c.id);
-  const b = cuesBetween(s, 56_000, 61_000).map((c) => c.id);
+  const b = cuesBetween(s, 54_000, 61_000).map((c) => c.id);
   assert.deepEqual(a, ['tick@57000', 'tick@58000', 'tick@59000']);
   assert.ok(a.every((id) => b.includes(id)));
 });

@@ -115,11 +115,14 @@ test('summary counts finished sets only', () => {
   assert.deepEqual([sum.type, sum.sets, sum.durations, sum.avg, sum.rest], ['rest', 2, [20, 30], 25, 60]);
 });
 
-test('cues: countdown, set 1, then 3-2-1 and go at the end of each rest', () => {
+test('cues: countdown, set 1, then 5-4-3-2-1 and go at the end of each rest', () => {
   const s = make();
   markDone(s, at(30_000));
   const list = cuesBetween(s, -READY_MS, 200_000).map((c) => `${c.kind}${c.set ?? ''}@${c.at}`);
-  assert.deepEqual(list, ['tick@-3000', 'tick@-2000', 'tick@-1000', 'go1@0', 'tick@87000', 'tick@88000', 'tick@89000', 'go2@90000']);
+  assert.deepEqual(list, [
+    'tick@-5000', 'tick@-4000', 'tick@-3000', 'tick@-2000', 'tick@-1000', 'go1@0',
+    'tick@85000', 'tick@86000', 'tick@87000', 'tick@88000', 'tick@89000', 'go2@90000',
+  ]);
 });
 
 test('cues move with the rest and get new ids', () => {

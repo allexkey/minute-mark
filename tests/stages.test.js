@@ -95,14 +95,20 @@ test('pause freezes warm-up too', () => {
 
 test('cues: warm-up → get ready → set 1, and prep → stretch → finish', () => {
   const s = make();
+  const five = (t) => [5000, 4000, 3000, 2000, 1000].map((c) => `tick@${t - c}`);
   const pre = cuesBetween(s, -lead, 1).map((c) => `${c.kind}@${c.at}`);
-  assert.deepEqual(pre, ['tick@-63000', 'tick@-62000', 'tick@-61000', 'stage@-60000', 'tick@-3000', 'tick@-2000', 'tick@-1000', 'go@0']);
+  assert.deepEqual(pre, [...five(-60_000), 'stage@-60000', ...five(0), 'go@0']);
   endSets(s, at(2 * MIN));
   const post = cuesBetween(s, 2 * MIN, 99 * MIN).map((c) => `${c.kind}@${c.at}`);
   const a = 2 * MIN + PREP_MS;
   const b = a + 10 * MIN;
-  assert.deepEqual(post, [`tick@${a - 3000}`, `tick@${a - 2000}`, `tick@${a - 1000}`, `stage@${a}`, `tick@${b - 3000}`, `tick@${b - 2000}`, `tick@${b - 1000}`, `finish@${b}`]);
+  const pulses = post.filter((c) => c.startsWith('pulse'));
+  assert.deepEqual(post.filter((c) => !c.startsWith('pulse')), [...five(a), `stage@${a}`, ...five(b), `finish@${b}`]);
   assert.ok(!post.some((c) => c.startsWith('go')), 'no set cues after the sets ended');
+  // a short beep every 30 s while stretching, stopping before the final countdown
+  assert.equal(pulses.length, 19);
+  assert.equal(pulses[0], `pulse@${a + 30_000}`);
+  assert.equal(pulses.at(-1), `pulse@${b - 30_000}`);
 });
 
 test('remaining time: exact for EMOM with a target', () => {

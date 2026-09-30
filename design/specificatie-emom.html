@@ -246,7 +246,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
 <div class="wrap">
 
 <header class="hero">
-  <div class="eyebrow">Specificație de design · v0.5 · 29 septembrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer, încălzire și stretching</div>
+  <div class="eyebrow">Specificație de design · v0.6 · 30 septembrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer, încălzire și stretching</div>
   <h1><span class="w">Work.</span> <span class="r">Rest.</span> <span class="p">Next&nbsp;set.</span></h1>
   <p class="lead">Un cronometru EMOM pentru sală, sub formă de PWA, gândit pentru iPhone. Interfața și vocea sunt în engleză. La fiecare minut: un beep, vocea care anunță setul („Set 9”), iar pe ecran numărul setului și timpul total al sesiunii. Tot ecranul își schimbă culoarea, ca să-l poți citi de pe podea. Marchezi sfârșitul setului cu o atingere pe ecran sau cu o apăsare pe AirPods.</p>
 </header>
@@ -256,8 +256,8 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
   <dl class="decisions">
     <div class="dec"><dt>Format</dt><dd>EMOM sau Rest timer<small>Se alege pe ecranul de start. Ambele merg până la End; ținta de seturi e opțională.</small></dd></div>
     <div class="dec"><dt>Interval</dt><dd>Implicit 1:00<small>Configurabil între 0:30 și 5:00, cu pas de 15 s</small></dd></div>
-    <div class="dec"><dt>Start</dt><dd>10 s de pregătire<small>„Get ready”, apoi 3-2-1</small></dd></div>
-    <div class="dec"><dt>Semnal la minut</dt><dd>Beep + voce<small>3 beep-uri scurte, apoi beep lung și „Set 9”</small></dd></div>
+    <div class="dec"><dt>Start</dt><dd>10 s de pregătire<small>„Get ready”, apoi 5-4-3-2-1</small></dd></div>
+    <div class="dec"><dt>Semnal la minut</dt><dd>Beep + voce<small>5 beep-uri scurte (5-4-3-2-1), apoi beep lung și „Set 9”</small></dd></div>
     <div class="dec"><dt>Ecran</dt><dd>Set în inel, timp rămas, total<small>Inelul se golește pe parcursul minutului</small></dd></div>
     <div class="dec"><dt>Stil</dt><dd>Full-color pe faze<small>Verde = WORK, albastru = REST, portocaliu = ultimele 5 s</small></dd></div>
     <div class="dec"><dt>Sfârșit de set</dt><dd>Tap oriunde sau AirPods<small>Se măsoară durata fiecărui set</small></dd></div>
@@ -276,10 +276,10 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
   <div class="tbl-wrap"><table>
     <thead><tr><th>Moment</th><th>Ecran</th><th>Sunet / voce</th></tr></thead>
     <tbody>
-      <tr><td>Start</td><td><span class="sw" style="background:var(--ready)"></span>GET READY, 10 → 1</td><td>“Get ready”, 3-2-1</td></tr>
+      <tr><td>Start</td><td><span class="sw" style="background:var(--ready)"></span>GET READY, 10 → 1</td><td>“Get ready”, 5-4-3-2-1</td></tr>
       <tr><td>Setul (fără limită)</td><td><span class="sw" style="background:var(--work)"></span>SET, numărul setului mare, dedesubt durata setului care crește (0:34); inelul se umple o dată pe minut</td><td>Beep lung, “Set N”</td></tr>
       <tr><td>Tap / AirPods simplu</td><td><span class="sw" style="background:var(--rest)"></span>REST, numărătoare inversă mare (1:00); butoanele <b>−15s · SKIP · +15s</b>; UNDO timp de 3 s</td><td>Confirmare, “Rest”</td></tr>
-      <tr><td>Ultimele 5 s ale pauzei</td><td><span class="sw" style="background:var(--prep)"></span>SET N IN, 5 → 1</td><td>3 beep-uri, apoi beep lung, “Set N”</td></tr>
+      <tr><td>Ultimele 5 s ale pauzei</td><td><span class="sw" style="background:var(--prep)"></span>SET N IN, 5 → 1</td><td>5 beep-uri, apoi beep lung, “Set N”</td></tr>
       <tr><td>AirPods în pauză</td><td>—</td><td>Apăsarea simplă e ignorată (nu sari peste pauză din greșeală); apăsarea dublă = UNDO</td></tr>
       <tr><td>Ținta atinsă</td><td>Rezumat cu KEEP GOING, imediat după marcarea ultimului set, fără pauză după el</td><td>Acord final, “Target reached”</td></tr>
     </tbody>
@@ -293,12 +293,12 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
   <div class="tbl-wrap"><table>
     <thead><tr><th>Etapă</th><th>Ecran</th><th>Sunet / voce</th><th>Cum se trece mai departe</th></tr></thead>
     <tbody>
-      <tr><td>Încălzire</td><td><span class="sw" style="background:#FF5E62"></span>WARM-UP, numărătoare inversă (4:12)</td><td>“Warm-up. 5 minutes.”, apoi liniște; 3-2-1 la final</td><td>Automat sau <b>SKIP WARM-UP</b></td></tr>
-      <tr><td>Pregătire seturi</td><td><span class="sw" style="background:var(--prep)"></span>SETS START IN 1:00, ultimele 10 s cu cifre mari</td><td>“Get ready. Sets start in one minute.”, 3-2-1, beep lung, “Set 1”</td><td>Automat sau SKIP</td></tr>
+      <tr><td>Încălzire</td><td><span class="sw" style="background:#FF5E62"></span>WARM-UP, numărătoare inversă (4:12)</td><td>“Warm-up. 5 minutes.”, apoi liniște; 5-4-3-2-1 la final</td><td>Automat sau <b>SKIP WARM-UP</b></td></tr>
+      <tr><td>Pregătire seturi</td><td><span class="sw" style="background:var(--prep)"></span>SETS START IN 1:00, ultimele 10 s cu cifre mari</td><td>“Get ready. Sets start in one minute.”, 5-4-3-2-1, beep lung, “Set 1”</td><td>Automat sau SKIP</td></tr>
       <tr><td>Seturi</td><td>EMOM sau Rest timer, ca până acum</td><td>—</td><td>Ținta atinsă, sau <b>Pauză → STRETCH</b></td></tr>
       <tr><td>Final seturi</td><td>—</td><td><b>10 beep-uri scurte</b>, “Stretching in one minute.”</td><td>—</td></tr>
-      <tr><td>Pregătire stretching</td><td><span class="sw" style="background:var(--prep)"></span>STRETCH IN 1:00</td><td>3-2-1, beep lung, “Stretch. 10 minutes.”</td><td>Automat sau SKIP</td></tr>
-      <tr><td>Stretching</td><td><span class="sw" style="background:#7B61FF"></span>STRETCH, numărătoare inversă</td><td>Liniște; la final acordul și “Session complete.”</td><td>Automat → rezumat, sau <b>SKIP STRETCH</b></td></tr>
+      <tr><td>Pregătire stretching</td><td><span class="sw" style="background:var(--prep)"></span>STRETCH IN 1:00</td><td>5-4-3-2-1, beep lung, “Stretch. 10 minutes.”</td><td>Automat sau SKIP</td></tr>
+      <tr><td>Stretching</td><td><span class="sw" style="background:#7B61FF"></span>STRETCH, numărătoare inversă</td><td>Un beep scurt la fiecare 30 s; 5-4-3-2-1 și acordul la final, “Session complete.”</td><td>Automat → rezumat, sau <b>SKIP STRETCH</b></td></tr>
     </tbody>
   </table></div>
   <p><b>Trei timere mici pe fiecare ecran de lucru.</b> Sus: <b>Total</b>, timpul de la Start, și <b>ora curentă</b>. Jos: <b>cât mai e până la final</b>. Acesta e exact când durata se poate calcula (EMOM cu țintă, încălzire, stretching), estimat cu „~” pentru Rest timer cu țintă, pe baza ritmului tău, și „sets + 11:00” fără țintă.</p>
@@ -323,7 +323,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
         <li><span>Alege tipul de timer (<b>EMOM</b> sau <b>Rest timer</b>), durata și modul audio, apoi apasă <b>START</b>.</span></li>
         <li><span>10 secunde de pregătire pe negru (GET READY), apoi ecranul devine <b>verde</b>: SET 1.</span></li>
         <li><span>Atinge ecranul (sau <span class="kbd">Space</span>) când termini setul: ecranul devine <b>albastru</b> (REST). Timp de 3 s poți apăsa UNDO.</span></li>
-        <li><span>În ultimele 5 secunde ecranul devine <b>portocaliu</b>; urmează 3 beep-uri, flash, apoi setul următor.</span></li>
+        <li><span>În ultimele 5 secunde ecranul devine <b>portocaliu</b>; urmează 5 beep-uri (5-4-3-2-1), flash, apoi setul următor.</span></li>
         <li><span><b>Warm-up și Stretch:</b> alege 5′ sau 10′ pe ecranul de start. Folosește ×10 ca să treci rapid prin încălzire, pregătire și stretching; din pauză, <b>STRETCH</b> încheie seturile.</span></li>
         <li><span><b>Rest timer:</b> setul nu are limită. După tap începe pauza, cu −15s / SKIP / +15s; când pauza se termină, setul următor pornește singur.</span></li>
         <li><span>Butonul ⏸ îngheață tot. Sesiunea se încheie din ecranul de pauză, cu <b>END</b>.</span></li>
@@ -343,13 +343,13 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
     <div class="tl-bar" role="img" aria-label="Minut: work verde 0-34 s, rest albastru 34-55 s, pregătire portocalie 55-60 s">
       <div style="flex:34;background:var(--work);color:var(--work-ink)">Work</div>
       <div style="flex:21;background:var(--rest);color:var(--rest-ink)">Rest</div>
-      <div style="flex:5;background:var(--prep);color:var(--prep-ink)">3·2·1</div>
+      <div style="flex:5;background:var(--prep);color:var(--prep-ink)">5…1</div>
     </div>
     <div class="tl-scale"><span>0:00</span><span>0:15</span><span>0:30</span><span>0:45</span><span>1:00</span></div>
     <div class="tl-marks">
       <div class="tl-mark" style="left:0"><b>0 s</b>Beep lung, flash, „Set 9”</div>
       <div class="tl-mark" style="left:calc(34/60*100%)"><b>34 s · tap / AirPods</b>Sunet de confirmare, „Rest”; durata setului: 34 s</div>
-      <div class="tl-mark" style="left:calc(55/60*100% - 2px);transform:translateX(-100%);border-left:0;border-right:2px solid var(--ink);padding:0 10px 0 0;text-align:right"><b>55 s → 59 s</b>Portocaliu, beep-uri la 57, 58, 59 s</div>
+      <div class="tl-mark" style="left:calc(55/60*100% - 2px);transform:translateX(-100%);border-left:0;border-right:2px solid var(--ink);padding:0 10px 0 0;text-align:right"><b>55 s → 59 s</b>Portocaliu, beep la fiecare secundă: 55 … 59 s</div>
     </div>
     <p class="muted">Dacă nu marchezi setul, ecranul rămâne verde până la secunda 55. În istoric, setul apare ca nemarcat, dar tot se numără.</p>
   </div>
@@ -362,7 +362,8 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
     <thead><tr><th>Moment</th><th>Sunet</th><th>Voce</th><th>Ecran</th></tr></thead>
     <tbody>
       <tr><td>Start</td><td>—</td><td>“Get ready”</td><td><span class="sw" style="background:var(--ready)"></span>Negru, 10 → 1</td></tr>
-      <tr><td>Ultimele 3 s (pregătire și fiecare minut)</td><td>3 beep-uri scurte · 880 Hz · 0,12 s</td><td>—</td><td>Cifre mari 3, 2, 1</td></tr>
+      <tr><td>Ultimele 5 s (tot ecranul portocaliu, la fiecare trecere)</td><td>5 beep-uri scurte · 880 Hz · 0,12 s</td><td>—</td><td>Cifre mari 5 … 1</td></tr>
+      <tr><td>Stretching, la fiecare 30 s</td><td>Un beep scurt, discret · 660 Hz sinus</td><td>—</td><td>Violet</td></tr>
       <tr><td>Minut nou</td><td>Beep lung · 1320 Hz · 0,6 s</td><td>“Set 9”</td><td><span class="sw" style="background:var(--work)"></span>Flash alb, apoi verde</td></tr>
       <tr><td>Tap / AirPods = gata setul</td><td>Două note descendente (confirmare)</td><td>“Rest” <span class="muted">(opțional)</span></td><td><span class="sw" style="background:var(--rest)"></span>Albastru</td></tr>
       <tr><td>Ultimele 5 s</td><td>—</td><td>—</td><td><span class="sw" style="background:var(--prep)"></span>Portocaliu</td></tr>
@@ -420,7 +421,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
     <thead><tr><th>Funcție</th><th>PWA (etapa 1)</th><th>Nativ (etapa 2)</th><th>Impact în design</th></tr></thead>
     <tbody>
       <tr><td>Sunet cu ecranul blocat</td><td>Nesigur</td><td>Sigur (background audio)</td><td>Dispare mesajul „You were away…”; wake lock rămâne opțional</td></tr>
-      <tr><td>Vibrații</td><td>Nu</td><td>Da (haptics)</td><td>Vibrație puternică la minut nou, dublă la 3-2-1, scurtă la tap (confirmare)</td></tr>
+      <tr><td>Vibrații</td><td>Nu</td><td>Da (haptics)</td><td>Vibrație puternică la minut nou, dublă la 5-4-3-2-1, scurtă la tap (confirmare)</td></tr>
       <tr><td>Live Activity / Dynamic Island</td><td>Nu</td><td>Da</td><td>Pe ecranul de blocare: „SET 8 · 0:18 · REST”, în culoarea fazei</td></tr>
       <tr><td>AirPods ca telecomandă</td><td>Cu ciudățenii</td><td>Stabil</td><td>Niciunul, doar funcționează mai sigur</td></tr>
       <tr><td>AirPods și muzică în paralel</td><td>Nu</td><td>Nu</td><td>Limită iOS: comutatorul AirPods / With music rămâne</td></tr>
@@ -626,7 +627,7 @@ const G = [
   ['Sets start in', 'Minutul de pregătire, portocaliu. În ultimele 10 s cifrele devin mari.', timerScr({cls:'ph-prep',label:'Sets start in',big:'0:42',big2:'time',frac:.7,total:'05:18',foot:'Set 1 · EMOM',stage:'Skip',segs:SG(1,.3,0,0,0),togo:'23:42 to go'})],
   ['EMOM · Work', 'Numărul setului în inel, timpul până la următorul minut sub el. Sus: Total, ora și banda sesiunii; jos: cât mai e.', timerScr({cls:'ph-work',label:'Set',big:'8',rem:'0:42',frac:.7,total:'13:18',foot:'Tap or press AirPods when done',segs:SG(1,1,.6,0,0),togo:'15:42 to go'})],
   ['EMOM · Rest', 'După tap sau AirPods. Se afișează durata setului.', timerScr({cls:'ph-rest',label:'Rest',big:'8',rem:'0:18',frac:.3,total:'13:42',foot:'Set 8: 34 s · next: set 9',segs:SG(1,1,.63,0,0),togo:'15:18 to go'})],
-  ['Ultimele 5 s', 'Portocaliu, beep-uri la 3, 2, 1. La fel în ambele moduri.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',big2:'xl',frac:.05,total:'13:57',foot:'Get ready',segs:SG(1,1,.66,0,0),togo:'15:03 to go'})],
+  ['Ultimele 5 s', 'Portocaliu, beep-uri la 5, 4, 3, 2, 1. La fel în ambele moduri.', timerScr({cls:'ph-prep',label:'Set 9 in',big:'3',big2:'xl',frac:.05,total:'13:57',foot:'Get ready',segs:SG(1,1,.66,0,0),togo:'15:03 to go'})],
   ['Rest timer · Set', 'Fără limită de timp: durata setului crește sub numărul lui. Fără țintă, segmentul seturilor e hașurat.', timerScr({cls:'ph-work',label:'Set',big:'3',rem:'0:41',frac:.68,total:'04:12',foot:'Tap or press AirPods when done',segs:SG(0,1,.3,0,0,true).slice(1),togo:'sets + 11:00 to go'})],
   ['Rest timer · Rest', 'Numărătoarea inversă e cifra mare. −15s / SKIP / +15s schimbă doar pauza curentă.', timerScr({cls:'ph-rest',label:'Rest',big:'0:48',big2:'time',frac:.8,total:'04:25',foot:'Set 3: 41 s · next: set 4',ctl:1,segs:SG(0,1,.33,0,0,true).slice(1),togo:'sets + 11:00 to go'})],
   ['Paused', 'Totul e înghețat. De aici: END (rezumat), STRETCH (încheie seturile și trece la stretching) sau RESUME.', timerScr({cls:'ph-paused',label:'Paused',big:'8',rem:'0:18',frac:.3,total:'13:42',foot:'Set 8 · rest',segs:SG(1,1,.63,0,0),togo:'15:18 to go',three:1,bot:'<button class="bigbtn ghost">End</button><button class="bigbtn stretchbtn">Stretch</button><button class="bigbtn go">Resume</button>'})],
@@ -637,7 +638,7 @@ const G = [
 document.getElementById('gallery').innerHTML = G.map(([t,c,h])=>`<figure><div class="phone" aria-hidden="true"><div class="notch"></div><div class="screen">${h}</div></div><figcaption><b>${t}</b>${c}</figcaption></figure>`).join('');
 
 /* ---------- live prototype: same timeline as the app (session ms; negative during warm-up and get-ready) ---------- */
-const LAST=5000, CD=[3000,2000,1000], STEP=15000, PREP=60000;
+const LAST=5000, CD=[5000,4000,3000,2000,1000], STEP=15000, PREP=60000;
 const host = document.getElementById('live');
 const flash = document.createElement('div'); flash.className='flash';
 const body = document.createElement('div'); body.style.cssText='position:absolute;inset:0';
@@ -694,7 +695,7 @@ function cues(from,to){
   }
   let kept = out.filter(c=>c.at<0||c.at<(S.mainEnd??Infinity));
   if(S.mainEnd!=null){ const n=out.length, a=S.mainEnd+PREP, b=a+S.ST;
-    for(const c of CD) push(a-c,'tick'); push(a,'stage',{say:`Stretch. ${S.ST/60000} minutes.`}); for(const c of CD) push(b-c,'tick'); push(b,'finish');
+    for(const c of CD) push(a-c,'tick'); push(a,'stage',{say:`Stretch. ${S.ST/60000} minutes.`}); for(let q=a+30000;q<b-5000;q+=30000) push(q,'pulse'); for(const c of CD) push(b-c,'tick'); push(b,'finish');
     kept = kept.concat(out.slice(n)); }
   return kept.sort((a,b)=>a.at-b.at);
 }
@@ -744,6 +745,7 @@ function tick(now){
     const prev=S.e; S.e+=dt; S.wall+=dt;
     for(const c of cues(prev,S.e)){
       if(c.kind==='tick') short();
+      else if(c.kind==='pulse') tone(660,.1,0,.18);
       else if(c.kind==='go'){ long(); doFlash(); say(c.min?`${c.min} minutes`:`Set ${c.set}`); }
       else if(c.kind==='stage'){ long(); doFlash(); say(c.say); }
       else if(c.kind==='target'){ if(S.ST){ endSets(targetMs()); } else { S.e=targetMs(); finish(true); } break; }

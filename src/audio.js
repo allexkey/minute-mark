@@ -151,6 +151,7 @@ export class AudioCues {
   sound(kind, when) {
     switch (kind) {
       case 'tick': return [this.tone(880, 0.12, when)];
+      case 'pulse': return [this.tone(660, 0.1, when, 0.22, 'sine')];
       case 'go': case 'stage': return [this.tone(1320, 0.6, when, 0.38)];
       case 'target': return this.endOfSets(when);
       case 'finish': return this.chord(when);

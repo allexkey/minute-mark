@@ -14,7 +14,8 @@ export const READY_MS = 10_000;
 export const PREP_MS = 60_000;
 export const LAST_MS = 5_000;
 export const REST_STEP_MS = 15_000;
-const COUNTDOWN = [3000, 2000, 1000];
+const COUNTDOWN = [5000, 4000, 3000, 2000, 1000]; // 5-4-3-2-1: the whole orange last-5-seconds screen
+const STRETCH_PULSE_MS = 30_000; // a short beep every 30 s while stretching
 const ANNOUNCE_EVERY_MS = 5 * 60_000;
 const DEFAULT_SET_MS = 45_000; // rest-timer estimate before any set is done
 
@@ -306,7 +307,7 @@ function setsRemaining(s, v, e) {
 
 /**
  * Audio cues whose session time falls in [from, to).
- * kinds: 'tick' (3-2-1), 'go' (new set), 'target' (EMOM target reached: the end-of-sets beeps),
+ * kinds: 'tick' (5-4-3-2-1), 'go' (new set), 'pulse' (every 30 s while stretching), 'target' (EMOM target reached: the end-of-sets beeps),
  * 'stage' (warm-up → get ready, prep → stretch; carries the words to say), 'finish' (end of stretch).
  * EMOM cues depend only on time. Other cues move when a rest is marked, undone or adjusted or a stage
  * is skipped; their ids include the time, so moved cues get new ids.
@@ -356,6 +357,8 @@ export function cuesBetween(s, from, to) {
     const before = out.length;
     for (const c of COUNTDOWN) push(a - c, 'tick');
     push(a, 'stage', { say: `Stretch. ${stretchOf(s) / 60_000} minutes.` });
+    // stop the 30 s pulses before the final countdown
+    for (let p = a + STRETCH_PULSE_MS; p < b - COUNTDOWN[0]; p += STRETCH_PULSE_MS) push(p, 'pulse');
     for (const c of COUNTDOWN) push(b - c, 'tick');
     push(b, 'finish');
     kept.push(...out.slice(before));
