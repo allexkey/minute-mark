@@ -10,6 +10,7 @@ export const DEFAULT_CFG = {
   target: 0, // 0 = no target
   warmup: 0, // minutes: 0 | 5 | 10
   stretch: 0, // minutes: 0 | 5 | 10
+  pulse: false, // low beep every 30 s in every phase
   mode: 'airpods', // 'airpods' | 'music'
   announceMinutes: true,
   sayRest: true,

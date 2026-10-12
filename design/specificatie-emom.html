@@ -90,6 +90,12 @@ a{color:var(--accent)}
 .botrow.three .bigbtn{font-size:5cqw;padding:0 1cqw;flex:1}
 .botrow .stretchbtn{background:#7B61FF;color:#fff}
 .setn.time.long{font-size:24cqw}
+.flabrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:2cqw}
+.flabrow .flab{margin:0}
+.mini{display:inline-flex;align-items:center;gap:2cqw;font:500 3.2cqw/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#98A39B;cursor:pointer;background:none;border:0;padding:0}
+.mini i{display:inline-block;width:9.6cqw;height:5.6cqw;border-radius:99px;background:#262D29;position:relative}
+.mini i::after{content:"";position:absolute;top:.8cqw;left:.8cqw;width:4cqw;height:4cqw;border-radius:50%;background:#fff;transition:transform .15s}
+.mini.on{color:#F1F4F2}.mini.on i{background:var(--work)}.mini.on i::after{transform:translateX(4cqw)}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:2.6cqw}
 .stepper.half{padding:1.4cqw}
 .stepper.half button{width:10cqw;height:10cqw;font-size:6cqw}
@@ -246,7 +252,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
 <div class="wrap">
 
 <header class="hero">
-  <div class="eyebrow">Specificație de design · v0.6 · 30 septembrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer, încălzire și stretching</div>
+  <div class="eyebrow">Specificație de design · v0.7 · 12 octombrie 2026 · aprobată, testată pe iOS 26.6.1 · + Rest timer, încălzire și stretching</div>
   <h1><span class="w">Work.</span> <span class="r">Rest.</span> <span class="p">Next&nbsp;set.</span></h1>
   <p class="lead">Un cronometru EMOM pentru sală, sub formă de PWA, gândit pentru iPhone. Interfața și vocea sunt în engleză. La fiecare minut: un beep, vocea care anunță setul („Set 9”), iar pe ecran numărul setului și timpul total al sesiunii. Tot ecranul își schimbă culoarea, ca să-l poți citi de pe podea. Marchezi sfârșitul setului cu o atingere pe ecran sau cu o apăsare pe AirPods.</p>
 </header>
@@ -298,9 +304,10 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
       <tr><td>Seturi</td><td>EMOM sau Rest timer, ca până acum</td><td>—</td><td>Ținta atinsă, sau <b>Pauză → STRETCH</b></td></tr>
       <tr><td>Final seturi</td><td>—</td><td><b>10 beep-uri scurte</b>, “Stretching in one minute.”</td><td>—</td></tr>
       <tr><td>Pregătire stretching</td><td><span class="sw" style="background:var(--prep)"></span>STRETCH IN 1:00</td><td>5-4-3-2-1, beep lung, “Stretch. 10 minutes.”</td><td>Automat sau SKIP</td></tr>
-      <tr><td>Stretching</td><td><span class="sw" style="background:#7B61FF"></span>STRETCH, numărătoare inversă</td><td>Un beep scurt la fiecare 30 s; 5-4-3-2-1 și acordul la final, “Session complete.”</td><td>Automat → rezumat, sau <b>SKIP STRETCH</b></td></tr>
+      <tr><td>Stretching</td><td><span class="sw" style="background:#7B61FF"></span>STRETCH, numărătoare inversă</td><td>Liniște (sau beep la 30 s, dacă e pornit); 5-4-3-2-1 și acordul la final, “Session complete.”</td><td>Automat → rezumat, sau <b>SKIP STRETCH</b></td></tr>
     </tbody>
   </table></div>
+  <p><b>Beep la fiecare 30 de secunde (opțional).</b> Pe ecranul de start, pe rândul „Audio”, e comutatorul <b>Beep every 30 s</b>. Când e pornit, se aude un beep scurt, mai jos ca ton decât cel de numărătoare, la fiecare 30 s <b>de la începutul fiecărei faze</b>: încălzire, minutul de pregătire, seturi și stretching. La EMOM de 1:00 sună la jumătatea fiecărui minut. La Rest timer sună la 0:30, 1:00 … din set, apoi din pauză. Nu sună niciodată peste 5-4-3-2-1. Când e oprit, nu există niciun beep de 30 s, nici la stretching.</p>
   <p><b>Trei timere mici pe fiecare ecran de lucru.</b> Sus: <b>Total</b>, timpul de la Start, și <b>ora curentă</b>. Jos: <b>cât mai e până la final</b>. Acesta e exact când durata se poate calcula (EMOM cu țintă, încălzire, stretching), estimat cu „~” pentru Rest timer cu țintă, pe baza ritmului tău, și „sets + 11:00” fără țintă.</p>
   <p><b>Banda sesiunii.</b> Sub timerele de sus apare o bandă cu segmentele încălzire · pregătire · seturi · pregătire · stretching. Fiecare segment se umple pe măsură ce avansezi. Fără țintă, segmentul seturilor e hașurat, pentru că durata lui nu se cunoaște. Pe ecranul de start, aceeași bandă apare colorată, cu planul sesiunii, durata totală și ora estimată de final.</p>
   <p class="muted">Rezumatul arată și durata totală a sesiunii, plus cât ai făcut efectiv încălzire și stretching (partea sărită cu Skip nu se numără). Exportul CSV are coloanele <code>warmup_seconds</code>, <code>stretch_seconds</code> și <code>session_seconds</code>.</p>
@@ -363,7 +370,7 @@ pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius
     <tbody>
       <tr><td>Start</td><td>—</td><td>“Get ready”</td><td><span class="sw" style="background:var(--ready)"></span>Negru, 10 → 1</td></tr>
       <tr><td>Ultimele 5 s (tot ecranul portocaliu, la fiecare trecere)</td><td>5 beep-uri scurte · 880 Hz · 0,12 s</td><td>—</td><td>Cifre mari 5 … 1</td></tr>
-      <tr><td>Stretching, la fiecare 30 s</td><td>Un beep scurt, discret · 660 Hz sinus</td><td>—</td><td>Violet</td></tr>
+      <tr><td>La fiecare 30 s, cu „Beep every 30 s” pornit</td><td>Un beep scurt, cu o octavă mai jos · 440 Hz</td><td>—</td><td>Neschimbat</td></tr>
       <tr><td>Minut nou</td><td>Beep lung · 1320 Hz · 0,6 s</td><td>“Set 9”</td><td><span class="sw" style="background:var(--work)"></span>Flash alb, apoi verde</td></tr>
       <tr><td>Tap / AirPods = gata setul</td><td>Două note descendente (confirmare)</td><td>“Rest” <span class="muted">(opțional)</span></td><td><span class="sw" style="background:var(--rest)"></span>Albastru</td></tr>
       <tr><td>Ultimele 5 s</td><td>—</td><td>—</td><td><span class="sw" style="background:var(--prep)"></span>Portocaliu</td></tr>
@@ -577,7 +584,7 @@ function setupScr(c){
         <div><div class="flab"><span class="dotw"></span>Warm-up</div><div class="seg seg3">${seg3('warmup')}</div></div>
         <div><div class="flab"><span class="dots"></span>Stretch</div><div class="seg seg3">${seg3('stretch')}</div></div>
       </div>
-      <div><div class="flab">Audio</div><div class="seg"><button class="${c.mode==='airpods'?'on':''}" data-act="m-air">${I.pods}AirPods</button><button class="${c.mode==='music'?'on':''}" data-act="m-mus">${I.music}With music</button></div><div class="hint">${warn}</div></div>
+      <div><div class="flabrow"><div class="flab">Audio</div><button class="mini ${c.pulse?'on':''}" data-act="pulse">Beep every 30 s<i></i></button></div><div class="seg"><button class="${c.mode==='airpods'?'on':''}" data-act="m-air">${I.pods}AirPods</button><button class="${c.mode==='music'?'on':''}" data-act="m-mus">${I.music}With music</button></div><div class="hint">${warn}</div></div>
     </div>
     <div class="startbar">${planOf(c)}<button class="bigbtn go" data-act="start">Start</button></div>
   </div>`;
@@ -620,7 +627,7 @@ const HIST = [
 const SG = (w,p1,st,p2,sr,open) => [{len:5,fill:w},{len:1,fill:p1},{len:12,fill:st,open},{len:1,fill:p2},{len:10,fill:sr}];
 
 /* static gallery */
-const C0 = {type:'emom',interval:60,rest:60,target:12,mode:'airpods',warmup:5,stretch:10};
+const C0 = {type:'emom',interval:60,rest:60,target:12,mode:'airpods',warmup:5,stretch:10,pulse:true};
 const G = [
   ['Start', 'Tipul de timer, interval sau pauză, țintă, încălzire și stretching (Off / 5′ / 10′), mod audio. Jos: planul sesiunii, durata și ora de final.', setupScr(C0)],
   ['Warm-up', 'Coral. Numărătoare inversă, apoi 1 min de pregătire. SKIP WARM-UP sare direct la pregătire.', timerScr({cls:'ph-warm',label:'Warm-up',big:'4:12',big2:'time',frac:.84,total:'00:48',foot:'Then 1 min to get ready',stage:'Skip warm-up',segs:SG(.16,0,0,0,0),togo:'28:12 to go'})],
@@ -644,7 +651,7 @@ const flash = document.createElement('div'); flash.className='flash';
 const body = document.createElement('div'); body.style.cssText='position:absolute;inset:0';
 host.append(body, flash);
 
-let cfg = {type:'emom',interval:60,rest:60,target:0,mode:'airpods',warmup:0,stretch:0};
+let cfg = {type:'emom',interval:60,rest:60,target:0,mode:'airpods',warmup:0,stretch:0,pulse:false};
 try{ const s=JSON.parse(localStorage.getItem('emom-cfg')||'null'); if(s) cfg=Object.assign(cfg,s);}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('emom-cfg',JSON.stringify(cfg))}catch(e){}};
 let view='setup', speed=1, soundOn=true, S=null, last=performance.now(), lastKey='', summary=null;
@@ -684,18 +691,24 @@ function vw(){
 const inSets = v => v.phase==='work'||v.phase==='rest'||v.phase==='last';
 function cues(from,to){
   const out=[]; const push=(at,kind,x={})=>{ if(at>=from&&at<to) out.push({at,kind,...x}); };
-  if(S.W){ for(const c of CD) push(-S.R-c,'tick'); push(-S.R,'stage',{say:'Get ready. Sets start in one minute.'}); }
+  // optional low beep every 30 s from the start of a phase, clear of the final 5-4-3-2-1
+  const pulses=(start,end,cd=true)=>{ if(!S.pulse) return; const stop=Math.min(to,cd?end-5000:end);
+    for(let k=Math.max(1,Math.ceil((from-start)/30000)); start+k*30000<stop; k++) push(start+k*30000,'pulse'); };
+  if(S.W){ pulses(-S.R-S.W,-S.R); for(const c of CD) push(-S.R-c,'tick'); push(-S.R,'stage',{say:'Get ready. Sets start in one minute.'}); }
+  pulses(-S.R,0);
   for(const c of CD) push(-c,'tick');
   if(S.type==='rest'){ push(0,'go',{set:1});
-    S.rsets.forEach((r,i)=>{ const set=i+2; if(r.restEnd==null||(S.target&&set>S.target)) return; for(const c of CD) if(r.restEnd-c>=r.doneAt) push(r.restEnd-c,'tick'); push(r.restEnd,'go',{set}); });
+    S.rsets.forEach((r,i)=>{ const set=i+2; pulses(r.start,r.doneAt??Infinity,false); if(r.restEnd==null||(S.target&&set>S.target)) return; pulses(r.doneAt,r.restEnd); for(const c of CD) if(r.restEnd-c>=r.doneAt) push(r.restEnd-c,'tick'); push(r.restEnd,'go',{set}); });
+    const l=S.rsets[S.rsets.length-1], ok=!(S.target&&S.rsets.length+1>S.target);
+    if(!l) pulses(0,Infinity,false); else if(l.restEnd!=null&&ok) pulses(l.restEnd,Infinity,false);
   } else {
     const end=targetMs();
     for(let k=Math.max(0,Math.floor(from/S.I)); k*S.I<to+S.I; k++){ const b=k*S.I; if(b>end) break; if(b===end){ push(b,'target'); break; }
-      push(b,'go',{set:k+1,min:b>0&&b%300000===0?b/60000:null}); for(const c of CD) if(b+S.I-c<=end) push(b+S.I-c,'tick'); }
+      push(b,'go',{set:k+1,min:b>0&&b%300000===0?b/60000:null}); pulses(b,Math.min(b+S.I,end)); for(const c of CD) if(b+S.I-c<=end) push(b+S.I-c,'tick'); }
   }
   let kept = out.filter(c=>c.at<0||c.at<(S.mainEnd??Infinity));
   if(S.mainEnd!=null){ const n=out.length, a=S.mainEnd+PREP, b=a+S.ST;
-    for(const c of CD) push(a-c,'tick'); push(a,'stage',{say:`Stretch. ${S.ST/60000} minutes.`}); for(let q=a+30000;q<b-5000;q+=30000) push(q,'pulse'); for(const c of CD) push(b-c,'tick'); push(b,'finish');
+    pulses(S.mainEnd,a); for(const c of CD) push(a-c,'tick'); push(a,'stage',{say:`Stretch. ${S.ST/60000} minutes.`}); pulses(a,b); for(const c of CD) push(b-c,'tick'); push(b,'finish');
     kept = kept.concat(out.slice(n)); }
   return kept.sort((a,b)=>a.at-b.at);
 }
@@ -723,7 +736,7 @@ function toGo(v){
 }
 
 function start(){ audio(); const W=cfg.warmup*60000, R=W?PREP:10000;
-  S={type:cfg.type,I:cfg.interval*1000,restMs:cfg.rest*1000,target:cfg.target,W,R,ST:cfg.stretch*60000,e:-(W+R),wall:0,paused:false,marks:{},rsets:[],markedE:-1e9,mainEnd:null,skW:0,skS:0};
+  S={type:cfg.type,pulse:cfg.pulse,I:cfg.interval*1000,restMs:cfg.rest*1000,target:cfg.target,W,R,ST:cfg.stretch*60000,e:-(W+R),wall:0,paused:false,marks:{},rsets:[],markedE:-1e9,mainEnd:null,skW:0,skS:0};
   view='run'; say(W?`Warm-up. ${cfg.warmup} minutes.`:'Get ready'); }
 function endSets(at){ if(S.mainEnd!=null||!S.ST) return; S.mainEnd = at ?? Math.min(S.e,targetMs()); S.e=Math.max(S.e,S.mainEnd); S.paused=false; tenBeeps(); setTimeout(()=>say('Stretching in one minute.'),1800); }
 function finish(targetReached){
@@ -745,7 +758,7 @@ function tick(now){
     const prev=S.e; S.e+=dt; S.wall+=dt;
     for(const c of cues(prev,S.e)){
       if(c.kind==='tick') short();
-      else if(c.kind==='pulse') tone(660,.1,0,.18);
+      else if(c.kind==='pulse') tone(440,.16,0,.22);
       else if(c.kind==='go'){ long(); doFlash(); say(c.min?`${c.min} minutes`:`Set ${c.set}`); }
       else if(c.kind==='stage'){ long(); doFlash(); say(c.say); }
       else if(c.kind==='target'){ if(S.ST){ endSets(targetMs()); } else { S.e=targetMs(); finish(true); } break; }
@@ -817,6 +830,7 @@ host.addEventListener('click',e=>{
   else if(/^(warmup|stretch)-\d+$/.test(k)){ const [n,m]=k.split('-'); cfg[n]=+m; }
   else if(k==='tg-') cfg.target=Math.max(0,cfg.target-1);
   else if(k==='tg+') cfg.target=Math.min(99,cfg.target+1);
+  else if(k==='pulse') cfg.pulse=!cfg.pulse;
   else if(k==='m-air') cfg.mode='airpods';
   else if(k==='m-mus') cfg.mode='music';
   else if(k==='start') start();

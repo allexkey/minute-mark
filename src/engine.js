@@ -15,17 +15,18 @@ export const PREP_MS = 60_000;
 export const LAST_MS = 5_000;
 export const REST_STEP_MS = 15_000;
 const COUNTDOWN = [5000, 4000, 3000, 2000, 1000]; // 5-4-3-2-1: the whole orange last-5-seconds screen
-const STRETCH_PULSE_MS = 30_000; // a short beep every 30 s while stretching
+const PULSE_MS = 30_000; // optional low beep every 30 s, counted from the start of each phase
 const ANNOUNCE_EVERY_MS = 5 * 60_000;
 const DEFAULT_SET_MS = 45_000; // rest-timer estimate before any set is done
 
-export function createSession({ type = 'emom', interval = 60, rest = 60, target = 0, mode = 'airpods', warmup = 0, stretch = 0 }, now) {
+export function createSession({ type = 'emom', interval = 60, rest = 60, target = 0, mode = 'airpods', warmup = 0, stretch = 0, pulse = false }, now) {
   return {
     type,
     interval: interval * 1000,
     restMs: rest * 1000,
     target,
     mode,
+    pulse, // low beep every 30 s in every phase
     warmupMs: warmup * 60_000,
     stretchMs: stretch * 60_000,
     readyMs: warmup ? PREP_MS : READY_MS,
@@ -307,7 +308,7 @@ function setsRemaining(s, v, e) {
 
 /**
  * Audio cues whose session time falls in [from, to).
- * kinds: 'tick' (5-4-3-2-1), 'go' (new set), 'pulse' (every 30 s while stretching), 'target' (EMOM target reached: the end-of-sets beeps),
+ * kinds: 'tick' (5-4-3-2-1), 'go' (new set), 'pulse' (the optional low beep every 30 s of a phase), 'target' (EMOM target reached: the end-of-sets beeps),
  * 'stage' (warm-up → get ready, prep → stretch; carries the words to say), 'finish' (end of stretch).
  * EMOM cues depend only on time. Other cues move when a rest is marked, undone or adjusted or a stage
  * is skipped; their ids include the time, so moved cues get new ids.
@@ -317,11 +318,19 @@ export function cuesBetween(s, from, to) {
   const push = (at, kind, extra = {}) => {
     if (at >= from && at < to) out.push({ at, kind, id: `${kind}@${at}`, ...extra });
   };
+  // low beep every 30 s from the start of a phase; `countdown` keeps it clear of the final 5-4-3-2-1
+  const pulses = (start, end, countdown = true) => {
+    if (!s.pulse) return;
+    const stop = Math.min(to, countdown ? end - COUNTDOWN[0] : end);
+    for (let k = Math.max(1, Math.ceil((from - start) / PULSE_MS)); start + k * PULSE_MS < stop; k++) push(start + k * PULSE_MS, 'pulse');
+  };
   const R = readyOf(s);
   if (warmOf(s)) {
+    pulses(-R - warmOf(s), -R);
     for (const c of COUNTDOWN) push(-R - c, 'tick');
     push(-R, 'stage', { say: 'Get ready. Sets start in one minute.' });
   }
+  pulses(-R, 0); // only the 1-minute get ready is long enough to get one
   // get-ready countdown before set 1
   for (const c of COUNTDOWN) push(-c, 'tick');
 
@@ -329,10 +338,17 @@ export function cuesBetween(s, from, to) {
     push(0, 'go', { set: 1, announceMinutes: null });
     s.rsets.forEach((r, i) => {
       const set = i + 2;
+      pulses(r.start, r.doneAt ?? Infinity, false); // while working on set i + 1
       if (r.restEnd == null || (s.target && set > s.target)) return;
+      pulses(r.doneAt, r.restEnd); // while resting
       for (const c of COUNTDOWN) if (r.restEnd - c >= r.doneAt) push(r.restEnd - c, 'tick');
       push(r.restEnd, 'go', { set, announceMinutes: null });
     });
+    // the set that follows the last rest (or set 1) has no record until it is marked
+    const last = s.rsets[s.rsets.length - 1];
+    const nextAllowed = !(s.target && s.rsets.length + 1 > s.target);
+    if (!last) pulses(0, Infinity, false);
+    else if (last.restEnd != null && nextAllowed) pulses(last.restEnd, Infinity, false);
   } else {
     const I = s.interval;
     const end = targetMs(s);
@@ -344,6 +360,7 @@ export function cuesBetween(s, from, to) {
       const set = k + 1;
       const announceMinutes = boundary > 0 && boundary % ANNOUNCE_EVERY_MS === 0 ? boundary / 60_000 : null;
       push(boundary, 'go', { set, announceMinutes });
+      pulses(boundary, Math.min(boundary + I, end));
       for (const c of COUNTDOWN) if (boundary + I - c <= end) push(boundary + I - c, 'tick');
     }
   }
@@ -355,10 +372,10 @@ export function cuesBetween(s, from, to) {
     const a = s.mainEnd + PREP_MS;
     const b = a + stretchOf(s);
     const before = out.length;
+    pulses(s.mainEnd, a);
     for (const c of COUNTDOWN) push(a - c, 'tick');
     push(a, 'stage', { say: `Stretch. ${stretchOf(s) / 60_000} minutes.` });
-    // stop the 30 s pulses before the final countdown
-    for (let p = a + STRETCH_PULSE_MS; p < b - COUNTDOWN[0]; p += STRETCH_PULSE_MS) push(p, 'pulse');
+    pulses(a, b);
     for (const c of COUNTDOWN) push(b - c, 'tick');
     push(b, 'finish');
     kept.push(...out.slice(before));

@@ -86,7 +86,10 @@ export function mountSetup(root, app) {
         </div>
       </div>
       <div>
-        <p class="flab" id="l-mode">Audio</p>
+        <div class="flab-row">
+          <p class="flab" id="l-mode">Audio</p>
+          <label class="mini-toggle"><span>Beep every 30 s</span><input type="checkbox" id="pulse"></label>
+        </div>
         <div class="seg" role="group" aria-labelledby="l-mode">
           <button data-mode="airpods">${icons.pods}AirPods</button>
           <button data-mode="music">${icons.music}With music</button>
@@ -117,6 +120,7 @@ export function mountSetup(root, app) {
     pressed('mode', cfg.mode);
     pressed('warmup', cfg.warmup);
     pressed('stretch', cfg.stretch);
+    $('#pulse').checked = !!cfg.pulse;
     $('#type-hint').textContent = TYPE_HINT[cfg.type];
     $('#mode-hint').textContent = MODE_HINT[cfg.mode];
     const p = plan(cfg);
@@ -138,6 +142,7 @@ export function mountSetup(root, app) {
   root.querySelectorAll('[data-mode]').forEach((b) => { b.onclick = change(() => { cfg.mode = b.dataset.mode; }); });
   root.querySelectorAll('[data-warmup]').forEach((b) => { b.onclick = change(() => { cfg.warmup = Number(b.dataset.warmup); }); });
   root.querySelectorAll('[data-stretch]').forEach((b) => { b.onclick = change(() => { cfg.stretch = Number(b.dataset.stretch); }); });
+  $('#pulse').onchange = change(() => { cfg.pulse = $('#pulse').checked; });
   root.querySelectorAll('[data-go]').forEach((b) => { b.onclick = () => app.go(b.dataset.go); });
   $('#start').onclick = () => app.start();
   paint();

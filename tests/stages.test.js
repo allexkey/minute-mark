@@ -105,10 +105,7 @@ test('cues: warm-up → get ready → set 1, and prep → stretch → finish', (
   const pulses = post.filter((c) => c.startsWith('pulse'));
   assert.deepEqual(post.filter((c) => !c.startsWith('pulse')), [...five(a), `stage@${a}`, ...five(b), `finish@${b}`]);
   assert.ok(!post.some((c) => c.startsWith('go')), 'no set cues after the sets ended');
-  // a short beep every 30 s while stretching, stopping before the final countdown
-  assert.equal(pulses.length, 19);
-  assert.equal(pulses[0], `pulse@${a + 30_000}`);
-  assert.equal(pulses.at(-1), `pulse@${b - 30_000}`);
+  assert.equal(pulses.length, 0, 'no 30 s beeps unless the option is on');
 });
 
 test('remaining time: exact for EMOM with a target', () => {
