@@ -151,7 +151,8 @@ export class AudioCues {
   sound(kind, when) {
     switch (kind) {
       case 'tick': return [this.tone(880, 0.12, when)];
-      case 'pulse': return [this.tone(440, 0.16, when, 0.3, 'triangle')]; // an octave below the countdown beep
+      // an octave below the countdown beep; square wave and extra level so it carries on a phone speaker
+      case 'pulse': return [this.tone(440, 0.24, when, 0.5)];
       case 'go': case 'stage': return [this.tone(1320, 0.6, when, 0.38)];
       case 'target': return this.endOfSets(when);
       case 'finish': return this.chord(when);

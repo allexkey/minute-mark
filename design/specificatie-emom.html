@@ -758,7 +758,7 @@ function tick(now){
     const prev=S.e; S.e+=dt; S.wall+=dt;
     for(const c of cues(prev,S.e)){
       if(c.kind==='tick') short();
-      else if(c.kind==='pulse') tone(440,.16,0,.22);
+      else if(c.kind==='pulse') tone(440,.24,0,.4);
       else if(c.kind==='go'){ long(); doFlash(); say(c.min?`${c.min} minutes`:`Set ${c.set}`); }
       else if(c.kind==='stage'){ long(); doFlash(); say(c.say); }
       else if(c.kind==='target'){ if(S.ST){ endSets(targetMs()); } else { S.e=targetMs(); finish(true); } break; }
